@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="560" viewBox="0 0 360 560" font-family="Helvetica, Arial, sans-serif">
+  <rect width="360" height="560" rx="18" fill="#efe7de"/>
+  <rect x="0" y="0" width="360" height="64" rx="18" fill="#075e54"/>
+  <rect x="0" y="32" width="360" height="32" fill="#075e54"/>
+  <circle cx="34" cy="32" r="16" fill="#c4d6d2"/>
+  <path d="M26 36 c2-8 14-8 16 0 M34 24 a6 6 0 1 1 0 12 a6 6 0 1 1 0 -12" fill="#7d9a94"/>
+  <text x="60" y="28" font-size="14" font-weight="bold" fill="#ffffff">&#8220;Mumbai Cyber Cell&#8221;</text>
+  <text x="60" y="46" font-size="11" fill="#cfe5e1">+91 98XX XXX 431 &#183; video call &#183; 02:41:07</text>
+  <g>
+    <rect x="16" y="86" width="252" height="74" rx="10" fill="#ffffff"/>
+    <text x="28" y="108" font-size="12" fill="#111">Madam your Aadhaar is linked to a</text>
+    <text x="28" y="124" font-size="12" fill="#111">parcel containing narcotics. Arrest</text>
+    <text x="28" y="140" font-size="12" fill="#111">warrant is issued. Stay on video call.</text>
+    <text x="256" y="152" font-size="9" fill="#9aa39e" text-anchor="end">10:36</text>
+  </g>
+  <g>
+    <rect x="16" y="170" width="252" height="58" rx="10" fill="#ffffff"/>
+    <text x="28" y="192" font-size="12" fill="#111">Transfer &#8377;1,20,000 to verification</text>
+    <text x="28" y="208" font-size="12" fill="#111">account for RBI clearance. a/c XXXX 4471</text>
+    <text x="256" y="220" font-size="9" fill="#9aa39e" text-anchor="end">10:52</text>
+  </g>
+  <g>
+    <rect x="92" y="238" width="252" height="42" rx="10" fill="#dcf8c6"/>
+    <text x="104" y="260" font-size="12" fill="#111">I have sent it. Please verify.</text>
+    <text x="332" y="272" font-size="9" fill="#9aa39e" text-anchor="end">11:04</text>
+  </g>
+  <g>
+    <rect x="16" y="290" width="252" height="74" rx="10" fill="#ffffff"/>
+    <text x="28" y="312" font-size="12" fill="#111">Second installment &#8377;80,000 required</text>
+    <text x="28" y="328" font-size="12" fill="#111">immediately. Do not disconnect. Do not</text>
+    <text x="28" y="344" font-size="12" fill="#111">inform anyone. This is confidential.</text>
+    <text x="256" y="356" font-size="9" fill="#9aa39e" text-anchor="end">11:05</text>
+  </g>
+  <g transform="rotate(-18 180 300)">
+    <rect x="70" y="272" width="220" height="42" rx="6" fill="none" stroke="#c95d55" stroke-width="2" opacity="0.6"/>
+    <text x="180" y="299" text-anchor="middle" font-size="16" font-weight="bold" fill="#c95d55" opacity="0.6" letter-spacing="3">SYNTHETIC DEMO</text>
+  </g>
+  <rect x="0" y="496" width="360" height="64" fill="#f6f3ef"/>
+  <rect x="16" y="512" width="264" height="34" rx="17" fill="#ffffff" stroke="#e2ddd6"/>
+  <text x="32" y="534" font-size="12" fill="#9aa39e">Message</text>
+  <circle cx="316" cy="529" r="17" fill="#075e54"/>
+  <path d="M310 529 h12 M317 523 l6 6 l-6 6" stroke="#ffffff" stroke-width="2" fill="none"/>
+  <text x="180" y="490" text-anchor="middle" font-size="10" fill="#a39a8e">Synthetic artifact for a hackathon prototype. No real person or number.</text>
+</svg>

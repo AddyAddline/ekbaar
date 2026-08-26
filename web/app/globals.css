@@ -1,0 +1,167 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+  --paper: #f6f2ea;
+  --paper-raised: #fdfbf6;
+  --paper-sunken: #efe9dd;
+  --ink: #211d18;
+  --ink-soft: #5c554a;
+  --ink-faint: #8a8272;
+  --line: #ddd5c6;
+  --line-strong: #c9bfab;
+  --navy: #1d3557;
+  --navy-deep: #14263f;
+  --navy-wash: #e7ecf3;
+  --stop: #b3261e;
+  --stop-deep: #8c1d17;
+  --ok: #2c6e49;
+  --ok-wash: #e4efe7;
+  --hold: #9a6a1f;
+  --hold-wash: #f5ecdb;
+  --mono-bg: #fbf8f1;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-raised: var(--paper-raised);
+  --color-paper-sunken: var(--paper-sunken);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-navy: var(--navy);
+  --color-navy-deep: var(--navy-deep);
+  --color-navy-wash: var(--navy-wash);
+  --color-stop: var(--stop);
+  --color-stop-deep: var(--stop-deep);
+  --color-ok: var(--ok);
+  --color-ok-wash: var(--ok-wash);
+  --color-hold: var(--hold);
+  --color-hold-wash: var(--hold-wash);
+  --color-mono-bg: var(--mono-bg);
+  --font-display: var(--font-fraunces);
+  --font-body: var(--font-plex);
+  --font-mono: var(--font-plex-mono);
+}
+
+html {
+  background: var(--paper);
+}
+
+body {
+  background:
+    radial-gradient(1200px 500px at 50% -200px, rgba(29, 53, 87, 0.05), transparent 70%),
+    var(--paper);
+  color: var(--ink);
+  font-family: var(--font-plex), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-display {
+  font-family: var(--font-fraunces), Georgia, serif;
+}
+
+.font-mono {
+  font-family: var(--font-plex-mono), ui-monospace, monospace;
+}
+
+/* Dossier texture: faint ruled lines like a paper case file */
+.dossier {
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 27px,
+      rgba(201, 191, 171, 0.22) 27px,
+      rgba(201, 191, 171, 0.22) 28px
+    ),
+    var(--paper-raised);
+}
+
+.stamp {
+  display: inline-block;
+  transform: rotate(-2deg);
+  border: 1.5px solid var(--hold);
+  color: var(--hold);
+  font-family: var(--font-plex-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  padding: 2px 7px;
+  text-transform: uppercase;
+  border-radius: 2px;
+}
+
+@keyframes fact-arrive {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+    background-color: var(--navy-wash);
+  }
+  60% {
+    opacity: 1;
+    background-color: var(--navy-wash);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    background-color: transparent;
+  }
+}
+
+.fact-arrive {
+  animation: fact-arrive 1.1s ease-out both;
+}
+
+@keyframes msg-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.msg-in {
+  animation: msg-in 0.35s ease-out both;
+}
+
+@keyframes takeover {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.takeover {
+  animation: takeover 0.4s ease-out both;
+}
+
+@keyframes time-break {
+  from {
+    letter-spacing: 0.5em;
+    opacity: 0;
+  }
+  to {
+    letter-spacing: 0.18em;
+    opacity: 1;
+  }
+}
+
+.time-break {
+  animation: time-break 1.2s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fact-arrive,
+  .msg-in,
+  .takeover,
+  .time-break {
+    animation: none;
+  }
+}
