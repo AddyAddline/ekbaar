@@ -1,0 +1,289 @@
+{
+  "case_id": "DEMO-CASE-0002",
+  "schema_version": "0.1.0",
+  "data_mode": "synthetic_demo",
+  "workflow_state": "citizen_action_required",
+  "actors": {
+    "reporter_role": "self",
+    "relationship_to_victim": null,
+    "victim_confirmation_required": true,
+    "victim_confirmation_status": "confirmed"
+  },
+  "incident": {
+    "raw_story": "I am on a WhatsApp video call right now. They say they are Mumbai Police and that a parcel with my Aadhaar number has drugs in it. They showed an ID card and an arrest warrant. I already sent 1,20,000 rupees to an account they called a verification account. Now they want another payment and they said I cannot hang up or tell anyone.",
+    "incident_at": "2026-08-27T11:05:00+05:30",
+    "discovered_at": "2026-08-27T11:05:00+05:30",
+    "financial_loss": true,
+    "active_coercion_at_intake": true,
+    "likely_route": "digital_arrest_emergency_then_bank_1930_ncrp",
+    "classification_status": "citizen_confirmed",
+    "classification_reason": "The confirmed story matches the documented digital-arrest pattern: callers impersonating police over a video call, a payment already made, a further demand, and an instruction to stay on the call and tell no one.",
+    "classification_rule": "digital_arrest_interruption",
+    "classification_rule_source": "PIB-2068698",
+    "alternative_routes": []
+  },
+  "emergency": {
+    "triggered": true,
+    "trigger_question": "Are you still on the call?",
+    "trigger_answer": "yes",
+    "screen_lines": [
+      "This matches a documented digital-arrest scam pattern.",
+      "End the call now. Do not send more money.",
+      "No government agency conducts investigations via phone or video calls."
+    ],
+    "screen_source": "PIB-2068698",
+    "actions_offered": [
+      "end_call",
+      "call_1930",
+      "notify_bank",
+      "tell_trusted_person"
+    ],
+    "resolved_at": "2026-08-27T11:08:00+05:30",
+    "resolution": "Citizen confirmed the call was ended and no second payment was made."
+  },
+  "facts": [
+    {
+      "fact_id": "FACT-001",
+      "field": "transaction.amount_inr",
+      "value": 120000,
+      "source_type": "evidence_extraction",
+      "source_id": "EVIDENCE-001",
+      "source_locator": "Amount row",
+      "confidence": 0.99,
+      "confirmation_status": "citizen_confirmed"
+    },
+    {
+      "fact_id": "FACT-002",
+      "field": "transaction.utr",
+      "value": "228834501277",
+      "source_type": "evidence_extraction",
+      "source_id": "EVIDENCE-001",
+      "source_locator": "UPI reference row",
+      "confidence": 0.98,
+      "confirmation_status": "citizen_confirmed"
+    },
+    {
+      "fact_id": "FACT-003",
+      "field": "transaction.bank_or_wallet",
+      "value": "Example Bank",
+      "source_type": "evidence_extraction",
+      "source_id": "EVIDENCE-001",
+      "source_locator": "Account row",
+      "confidence": 0.97,
+      "confirmation_status": "citizen_confirmed"
+    },
+    {
+      "fact_id": "FACT-004",
+      "field": "transaction.date",
+      "value": "2026-08-27",
+      "source_type": "evidence_extraction",
+      "source_id": "EVIDENCE-001",
+      "source_locator": "Date row",
+      "confidence": 0.98,
+      "confirmation_status": "citizen_confirmed"
+    },
+    {
+      "fact_id": "FACT-005",
+      "field": "suspect.mobile_display",
+      "value": "+91 98XX XXX 431",
+      "source_type": "evidence_extraction",
+      "source_id": "EVIDENCE-002",
+      "source_locator": "WhatsApp conversation header",
+      "confidence": 0.95,
+      "confirmation_status": "citizen_confirmed"
+    },
+    {
+      "fact_id": "FACT-006",
+      "field": "suspect.bank_account",
+      "value": "XXXX XXXX 4471",
+      "source_type": "citizen_statement",
+      "source_id": null,
+      "source_locator": "Citizen recalled the account shown on the call",
+      "confidence": 0.7,
+      "confirmation_status": "citizen_confirmed"
+    },
+    {
+      "fact_id": "FACT-007",
+      "field": "incident.channel",
+      "value": "WhatsApp video call",
+      "source_type": "citizen_statement",
+      "source_id": null,
+      "source_locator": "Opening story",
+      "confidence": 0.99,
+      "confirmation_status": "citizen_confirmed"
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "EVIDENCE-001",
+      "kind": "transfer_receipt",
+      "display_name": "Synthetic UPI receipt.png",
+      "mime_type": "image/png",
+      "size_bytes": 184220,
+      "sha256": null,
+      "integrity_status": "not_hashed",
+      "original_preserved": true,
+      "captured_at": "2026-08-27T11:12:00+05:30"
+    },
+    {
+      "evidence_id": "EVIDENCE-002",
+      "kind": "chat_screenshot",
+      "display_name": "Synthetic WhatsApp call screenshot.png",
+      "mime_type": "image/png",
+      "size_bytes": 231480,
+      "sha256": null,
+      "integrity_status": "not_hashed",
+      "original_preserved": true,
+      "captured_at": "2026-08-27T11:13:00+05:30"
+    }
+  ],
+  "actions": [
+    {
+      "action_id": "ACTION-001",
+      "kind": "end_call",
+      "label": "End the call. Do not send more money.",
+      "status": "citizen_completed",
+      "basis_source_id": "PIB-2068698",
+      "deadline_at": null
+    },
+    {
+      "action_id": "ACTION-002",
+      "kind": "call_1930",
+      "label": "Call 1930 and report the financial fraud",
+      "status": "citizen_completed",
+      "basis_source_id": "MHA-CFCFRMS-2026",
+      "deadline_at": null
+    },
+    {
+      "action_id": "ACTION-003",
+      "kind": "contact_bank",
+      "label": "Notify the bank through its official fraud channel",
+      "status": "citizen_completed",
+      "basis_source_id": "MHA-CFCFRMS-2026",
+      "deadline_at": null
+    },
+    {
+      "action_id": "ACTION-004",
+      "kind": "prepare_ncrp",
+      "label": "Review and prepare the NCRP complaint",
+      "status": "citizen_completed",
+      "basis_source_id": "NCRP-CHECKLIST-2024",
+      "deadline_at": null
+    },
+    {
+      "action_id": "ACTION-005",
+      "kind": "contact_police_station",
+      "label": "Contact the police station named in the official update",
+      "status": "pending",
+      "basis_source_id": "EVENT-003",
+      "deadline_at": null
+    }
+  ],
+  "packets": [
+    {
+      "packet_id": "PACKET-001",
+      "recipient": "bank",
+      "contents": [
+        "transaction.amount_inr",
+        "transaction.utr",
+        "transaction.date",
+        "transaction.bank_or_wallet",
+        "suspect.bank_account"
+      ],
+      "note": "Unauthorized transfer under coercion by callers impersonating police. Request immediate hold and fraud reference number."
+    },
+    {
+      "packet_id": "PACKET-002",
+      "recipient": "helpline_1930",
+      "contents": [
+        "incident.channel",
+        "transaction.amount_inr",
+        "transaction.date",
+        "transaction.utr"
+      ],
+      "note": "One-breath summary: I was held on a WhatsApp video call by people posing as police and transferred 1,20,000 rupees today; UTR ending 1277; no further payment made."
+    },
+    {
+      "packet_id": "PACKET-003",
+      "recipient": "ncrp",
+      "contents": [
+        "incident.raw_story",
+        "transaction.amount_inr",
+        "transaction.utr",
+        "transaction.date",
+        "transaction.bank_or_wallet",
+        "suspect.mobile_display",
+        "suspect.bank_account",
+        "incident.channel"
+      ],
+      "note": "Full narrative with evidence files, mapped to the current NCRP financial-fraud checklist."
+    }
+  ],
+  "submissions": [
+    {
+      "submission_id": "SUBMISSION-001",
+      "destination": "bank",
+      "mode": "citizen_recorded",
+      "status": "acknowledged",
+      "reference_number": "DEMO-BANK-0002",
+      "fir_number": null,
+      "submitted_at": "2026-08-27T11:26:00+05:30"
+    },
+    {
+      "submission_id": "SUBMISSION-002",
+      "destination": "ncrp",
+      "mode": "simulated",
+      "status": "acknowledged",
+      "reference_number": "DEMO-NCRP-2026-0002",
+      "fir_number": null,
+      "submitted_at": "2026-08-27T11:41:00+05:30"
+    }
+  ],
+  "events": [
+    {
+      "event_id": "EVENT-001",
+      "occurred_at": "2026-08-27T11:06:00+05:30",
+      "source_type": "system",
+      "raw_text": "Emergency interruption shown: story matched the digital-arrest pattern while the call was active.",
+      "established_facts": [
+        "The intake was interrupted before any form field was requested.",
+        "The citizen ended the call and made no second payment."
+      ],
+      "not_established": [
+        "No assessment of any real person or account was made."
+      ],
+      "next_action_ids": ["ACTION-002", "ACTION-003"]
+    },
+    {
+      "event_id": "EVENT-002",
+      "occurred_at": "2026-08-27T11:41:00+05:30",
+      "source_type": "system",
+      "raw_text": "SIMULATED: NCRP complaint acknowledged with reference DEMO-NCRP-2026-0002.",
+      "established_facts": [
+        "The demo recorded a simulated NCRP acknowledgement."
+      ],
+      "not_established": [
+        "No real complaint was submitted.",
+        "No FIR was registered.",
+        "No police officer was assigned."
+      ],
+      "next_action_ids": []
+    },
+    {
+      "event_id": "EVENT-003",
+      "occurred_at": "2026-08-27T17:30:00+05:30",
+      "source_type": "ncrp",
+      "raw_text": "DEMO MESSAGE: An amount of Rs 74000 has been put on hold. Kindly contact the police station named in your complaint record.",
+      "established_facts": [
+        "The synthetic update says that Rs 74000 was put on hold.",
+        "The synthetic update asks the citizen to contact the named police station."
+      ],
+      "not_established": [
+        "The message does not say that Rs 74000 was refunded.",
+        "The message does not say that the full loss was recovered.",
+        "The message does not say that the case is closed."
+      ],
+      "next_action_ids": ["ACTION-005"]
+    }
+  ]
+}

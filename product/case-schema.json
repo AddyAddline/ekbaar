@@ -1,0 +1,354 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/bwmi/cyber-case.schema.json",
+  "title": "Cyber incident case",
+  "description": "Citizen-owned record used for triage, evidence review, complaint preparation, and case tracking.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "case_id",
+    "schema_version",
+    "data_mode",
+    "workflow_state",
+    "actors",
+    "incident",
+    "facts",
+    "evidence",
+    "actions",
+    "submissions",
+    "events"
+  ],
+  "properties": {
+    "case_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "schema_version": {
+      "const": "0.1.0"
+    },
+    "data_mode": {
+      "enum": ["synthetic_demo", "citizen_data"]
+    },
+    "workflow_state": {
+      "enum": [
+        "urgent_action_required",
+        "collecting_evidence",
+        "ready_to_file",
+        "filed_and_acknowledged",
+        "official_update_received",
+        "citizen_action_required",
+        "awaiting_authority",
+        "escalation_available",
+        "closed",
+        "withdrawn"
+      ]
+    },
+    "actors": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reporter_role", "victim_confirmation_required"],
+      "properties": {
+        "reporter_role": {
+          "enum": ["victim", "family_helper", "other_helper"]
+        },
+        "relationship_to_victim": {
+          "type": ["string", "null"]
+        },
+        "victim_confirmation_required": {
+          "type": "boolean"
+        },
+        "victim_confirmation_status": {
+          "enum": ["not_requested", "pending", "confirmed", "declined"]
+        }
+      }
+    },
+    "incident": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "raw_story",
+        "incident_at",
+        "financial_loss",
+        "likely_route",
+        "classification_status"
+      ],
+      "properties": {
+        "raw_story": {
+          "type": "string",
+          "minLength": 1
+        },
+        "incident_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "discovered_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "financial_loss": {
+          "type": "boolean"
+        },
+        "likely_route": {
+          "enum": [
+            "bank_1930_ncrp_financial_fraud",
+            "ncrp_other_cybercrime",
+            "ncrp_women_child",
+            "chakshu_or_report_suspect",
+            "ceir",
+            "consumer_helpline",
+            "emergency_112",
+            "needs_human_review"
+          ]
+        },
+        "classification_status": {
+          "enum": ["candidate", "citizen_confirmed", "human_review_required"]
+        },
+        "classification_reason": {
+          "type": "string"
+        },
+        "alternative_routes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "facts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/fact"
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/evidence"
+      }
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/action"
+      }
+    },
+    "submissions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/submission"
+      }
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/event"
+      }
+    }
+  },
+  "$defs": {
+    "fact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fact_id",
+        "field",
+        "value",
+        "source_type",
+        "confirmation_status"
+      ],
+      "properties": {
+        "fact_id": {
+          "type": "string"
+        },
+        "field": {
+          "type": "string"
+        },
+        "value": {},
+        "source_type": {
+          "enum": ["citizen_statement", "evidence_extraction", "official_event", "system_rule"]
+        },
+        "source_id": {
+          "type": ["string", "null"]
+        },
+        "source_locator": {
+          "type": ["string", "null"]
+        },
+        "confidence": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "confirmation_status": {
+          "enum": ["unconfirmed", "citizen_confirmed", "citizen_corrected", "official"]
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidence_id",
+        "kind",
+        "display_name",
+        "mime_type",
+        "size_bytes",
+        "integrity_status",
+        "original_preserved"
+      ],
+      "properties": {
+        "evidence_id": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "bank_statement",
+            "transfer_receipt",
+            "transaction_sms",
+            "chat_screenshot",
+            "caller_screenshot",
+            "call_recording",
+            "email",
+            "url",
+            "identity_document",
+            "other"
+          ]
+        },
+        "display_name": {
+          "type": "string"
+        },
+        "mime_type": {
+          "type": "string"
+        },
+        "size_bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sha256": {
+          "type": ["string", "null"],
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "integrity_status": {
+          "enum": ["not_hashed", "hashed", "hash_mismatch"]
+        },
+        "original_preserved": {
+          "type": "boolean"
+        },
+        "captured_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        }
+      }
+    },
+    "action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["action_id", "kind", "label", "status", "basis_source_id"],
+      "properties": {
+        "action_id": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "contact_bank",
+            "call_1930",
+            "prepare_ncrp",
+            "preserve_evidence",
+            "secure_account",
+            "contact_police_station",
+            "check_official_status",
+            "escalate",
+            "other"
+          ]
+        },
+        "label": {
+          "type": "string"
+        },
+        "status": {
+          "enum": ["pending", "in_progress", "citizen_completed", "not_applicable"]
+        },
+        "basis_source_id": {
+          "type": "string"
+        },
+        "deadline_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        }
+      }
+    },
+    "submission": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["submission_id", "destination", "mode", "status"],
+      "properties": {
+        "submission_id": {
+          "type": "string"
+        },
+        "destination": {
+          "enum": ["bank", "1930", "ncrp", "police_station", "other"]
+        },
+        "mode": {
+          "enum": ["simulated", "citizen_recorded"]
+        },
+        "status": {
+          "enum": ["draft", "ready", "acknowledged", "failed"]
+        },
+        "reference_number": {
+          "type": ["string", "null"]
+        },
+        "fir_number": {
+          "type": ["string", "null"]
+        },
+        "submitted_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        }
+      }
+    },
+    "event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_id",
+        "occurred_at",
+        "source_type",
+        "raw_text",
+        "established_facts",
+        "not_established",
+        "next_action_ids"
+      ],
+      "properties": {
+        "event_id": {
+          "type": "string"
+        },
+        "occurred_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "source_type": {
+          "enum": ["citizen", "bank", "1930", "ncrp", "police", "system"]
+        },
+        "raw_text": {
+          "type": "string"
+        },
+        "established_facts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "not_established": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "next_action_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
