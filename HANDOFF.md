@@ -137,6 +137,9 @@ Advit's session had these. Your partner's may not. If a skill is missing, the fa
 ## Files in this repo
 
 - `HANDOFF.md`, this file.
+- `web/`, the product: EkBaar, a Next.js app. Landing, guided digital-arrest journey, blank case with deterministic triage and OpenAI-optional extraction, limitations page, and an unlinked `/architecture` frame for minute two of the video. `npm run dev` inside `web/`.
+- `product/rule-matrix.md` and `product/case-schema.json`, the Codex-built validation matrix and schema the app's rules encode. `product/fixtures/demo-digital-arrest-case.json` is the guided case.
+- `docs/05-summary-draft.md`, the 250-word summary skeleton to finalize after recording.
 - `docs/00-brief.md`, the hackathon ground truth pulled from the site on 23 August, including all deadlines, rules and deliverables.
 - `docs/01-judge-model.md`, everything from the rules video with timestamps, the ten platform list, the off-list penalty quote, and the tension between the website's end-to-end criterion and the video saying they do not look at the admin side.
 - `docs/02-playbook.md`, the five day shape, the problem selection filter, the validation moves ranked by evidence per hour, the video shot list second by second, the 250 word template, the administrative burden vocabulary, and the anti-patterns.
