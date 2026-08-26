@@ -33,8 +33,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ model: false, facts: [] });
   }
 
+  const base = (process.env.OPENAI_BASE_URL || "https://api.openai.com/v1").replace(/\/$/, "");
   try {
-    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    const res = await fetch(`${base}/chat/completions`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
