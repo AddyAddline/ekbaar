@@ -35,4 +35,4 @@ npm run dev
 
 ## Team
 
-Advit & Aryan. Strategy, build history, and every decision are in this repo's commits and `docs/` — kept honest on purpose.
+Advit, solo, with AI doing the field work. Strategy, build history, and every decision are in this repo's commits and `docs/` — kept honest on purpose.
