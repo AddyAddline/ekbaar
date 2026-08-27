@@ -6,6 +6,7 @@ import CaseFile from "@/components/CaseFile";
 import Emergency from "@/components/Emergency";
 import Packets from "@/components/Packets";
 import { SpeakButton } from "@/components/VoiceControls";
+import { onSayInterrupt, sayAloud, stopSaying } from "@/lib/say";
 import { triage } from "@/lib/rules";
 import type { Fact, Msg, Packet, WorkflowState, CaseEvent } from "@/lib/types";
 
@@ -61,8 +62,11 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
   const recRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
+
+  // Any playback interruption (another message, another button) clears the
+  // speaking indicator.
+  useEffect(() => onSayInterrupt(() => setSpeaking(false)), []);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
@@ -70,7 +74,7 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
 
   useEffect(
     () => () => {
-      audioRef.current?.pause();
+      stopSaying();
       recRef.current?.stream.getTracks().forEach((t) => t.stop());
       if (timerRef.current) clearInterval(timerRef.current);
     },
@@ -81,27 +85,8 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
 
   const playReply = async (text: string) => {
     if (!voiceOn) return;
-    try {
-      const r = await fetch("/api/tts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: text.slice(0, 800), voice }),
-      });
-      if (!r.ok) return;
-      const blob = await r.blob();
-      const url = URL.createObjectURL(blob);
-      audioRef.current?.pause();
-      const a = new Audio(url);
-      audioRef.current = a;
-      setSpeaking(true);
-      a.onended = () => {
-        setSpeaking(false);
-        URL.revokeObjectURL(url);
-      };
-      await a.play().catch(() => setSpeaking(false));
-    } catch {
-      /* silent: voice is a layer, never a dependency */
-    }
+    setSpeaking(true);
+    await sayAloud(text, { voice, onEnd: () => setSpeaking(false) });
   };
 
   const mergeFacts = (
@@ -134,8 +119,7 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
     const text = (textRaw ?? input).trim();
     if (!text || busy) return;
     setInput("");
-    audioRef.current?.pause();
-    setSpeaking(false);
+    stopSaying();
     say({ role: "user", text });
 
     // Deterministic guard before anything else.
@@ -326,7 +310,7 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
                 )}
                 {m.role === "system" && (
                   <span className="mt-1.5 block">
-                    <SpeakButton text={m.text} />
+                    <SpeakButton text={m.text} voice={voice} />
                   </span>
                 )}
               </div>
@@ -425,7 +409,7 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
             <div className="flex items-center gap-1.5">
               <button
                 onClick={() => {
-                  if (voiceOn) audioRef.current?.pause();
+                  if (voiceOn) stopSaying();
                   setVoiceOn(!voiceOn);
                 }}
                 className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold ${

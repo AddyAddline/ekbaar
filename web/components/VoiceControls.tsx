@@ -3,30 +3,37 @@
 import { useEffect, useRef, useState } from "react";
 import {
   createRecognizer,
-  speak,
-  stopSpeaking,
   sttSupported,
-  ttsSupported,
   VOICE_LANGS,
   type VoiceLang,
 } from "@/lib/voice";
+import { onSayInterrupt, sayAloud, stopSaying } from "@/lib/say";
 
-/* A speaker button that reads one message aloud. */
-export function SpeakButton({ text, lang = "en-IN", light = false }: { text: string; lang?: VoiceLang; light?: boolean }) {
+/* A speaker button that reads one message aloud — same Gemini voice and the
+   same single audio channel as everything else (browser voice only as a
+   fallback inside sayAloud). Starting any other playback resets this one. */
+export function SpeakButton({
+  text,
+  lang = "en-IN",
+  light = false,
+  voice = "Kore",
+}: {
+  text: string;
+  lang?: VoiceLang;
+  light?: boolean;
+  voice?: string;
+}) {
   const [on, setOn] = useState(false);
-  const [ok, setOk] = useState(false);
-  useEffect(() => setOk(ttsSupported()), []);
-  if (!ok) return null;
+  useEffect(() => onSayInterrupt(() => setOn(false)), []);
   return (
     <button
       aria-label={on ? "Stop reading aloud" : "Read aloud"}
       onClick={() => {
         if (on) {
-          stopSpeaking();
-          setOn(false);
+          stopSaying();
         } else {
           setOn(true);
-          speak(text, lang, { onEnd: () => setOn(false) });
+          sayAloud(text, { voice, fallbackLang: lang, onEnd: () => setOn(false) });
         }
       }}
       className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold transition-colors ${

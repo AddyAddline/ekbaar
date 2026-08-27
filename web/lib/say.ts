@@ -8,17 +8,32 @@ import { speak as browserSpeak, stopSpeaking as browserStop, type VoiceLang } fr
 
 let current: HTMLAudioElement | null = null;
 
+// One audio channel for the whole app: anything starting to speak stops
+// whatever else was speaking, and interested buttons get told.
+const subs = new Set<() => void>();
+export function onSayInterrupt(cb: () => void): () => void {
+  subs.add(cb);
+  return () => subs.delete(cb);
+}
+function notify() {
+  subs.forEach((cb) => cb());
+}
+
 export function stopSaying() {
   current?.pause();
   current = null;
   browserStop();
+  notify();
 }
 
 export async function sayAloud(
   text: string,
   opts: { voice?: string; style?: string; fallbackLang?: VoiceLang; onEnd?: () => void } = {}
 ): Promise<void> {
-  stopSaying();
+  current?.pause();
+  current = null;
+  browserStop();
+  notify();
   try {
     const r = await fetch("/api/tts", {
       method: "POST",
