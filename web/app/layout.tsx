@@ -1,29 +1,30 @@
 import type { Metadata } from "next";
-import { Fraunces, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
+import { Noto_Sans, Noto_Sans_Devanagari, Noto_Sans_Mono } from "next/font/google";
 import "./globals.css";
+import { PortalFooter } from "@/components/PortalChrome";
 
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
+const noto = Noto_Sans({
+  variable: "--font-noto",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
-const plex = IBM_Plex_Sans({
-  variable: "--font-plex",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
+const notoDev = Noto_Sans_Devanagari({
+  variable: "--font-noto-dev",
+  subsets: ["devanagari"],
+  weight: ["500", "600", "700"],
 });
 
-const plexMono = IBM_Plex_Mono({
-  variable: "--font-plex-mono",
+const notoMono = Noto_Sans_Mono({
+  variable: "--font-noto-mono",
   subsets: ["latin"],
   weight: ["400", "500"],
 });
 
 export const metadata: Metadata = {
-  title: "EkBaar — tell it once",
+  title: "Cyber Satark — the cyber crime portal, rebuilt around the citizen",
   description:
-    "An independent prototype that rebuilds the cybercrime reporting journey around the incident: interrupt an active scam, build one verified case file, and stay with the case until it is finished.",
+    "An independent prototype that rebuilds India's cybercrime reporting journey around the incident: interrupt an active scam, build one verified case file, learn the tells, and stay with the case until it is finished.",
 };
 
 export default function RootLayout({
@@ -32,15 +33,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${fraunces.variable} ${plex.variable} ${plexMono.variable} min-h-dvh flex flex-col`}
+        className={`${noto.variable} ${notoDev.variable} ${notoMono.variable} flex min-h-dvh flex-col`}
       >
-        <div className="flex-1 flex flex-col">{children}</div>
-        <footer className="border-t border-line px-5 py-3 text-center">
-          <p className="text-[11px] text-ink-faint tracking-wide">
-            Independent hackathon prototype, not a government service. All data
-            synthetic.
-          </p>
-        </footer>
+        {children}
+        <PortalFooter />
       </body>
     </html>
   );

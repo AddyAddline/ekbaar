@@ -11,7 +11,7 @@ export default function ArchitecturePage() {
   return (
     <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col justify-center px-8 py-10">
       <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.22em] text-ink-faint">
-        EkBaar · how it works
+        Cyber Satark · how it works
       </p>
       <h1 className="mb-8 font-display text-[30px] font-semibold text-ink">
         One case record. Everything else is made from it.

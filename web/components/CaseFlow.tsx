@@ -181,8 +181,14 @@ const nid = () => `m${++idCounter}`;
 
 /* ------------------------------------------------------------------ */
 
-export default function CaseFlow({ mode }: { mode: "guided" | "blank" }) {
-  const [stage, setStage] = useState<Stage>("intro");
+export default function CaseFlow({
+  mode,
+  emergencyStart = false,
+}: {
+  mode: "guided" | "blank";
+  emergencyStart?: boolean;
+}) {
+  const [stage, setStage] = useState<Stage>(emergencyStart ? "emergency" : "intro");
   const [msgs, setMsgs] = useState<Msg[]>([
     {
       id: nid(),
@@ -197,7 +203,9 @@ export default function CaseFlow({ mode }: { mode: "guided" | "blank" }) {
   const [evidence, setEvidence] = useState<EvidenceItem[]>([]);
   const [actions, setActions] = useState<ActionItem[]>([]);
   const [events, setEvents] = useState<CaseEvent[]>([]);
-  const [workflow, setWorkflow] = useState<WorkflowState>("collecting evidence");
+  const [workflow, setWorkflow] = useState<WorkflowState>(
+    emergencyStart ? "urgent action required" : "collecting evidence"
+  );
   const [showPackets, setShowPackets] = useState(false);
   const [showLater, setShowLater] = useState(false);
   const [showExplain, setShowExplain] = useState(false);
