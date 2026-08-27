@@ -38,7 +38,7 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
     {
       id: nid(),
       role: "system",
-      text: "What's happening? बोलिए या लिखिए — हिंदी, मराठी, English, कोई भी भाषा.\n\nTell it once, in your own words. I'll build your case file as you speak. (Prototype — no real names, IDs or account numbers, please.)",
+      text: "What's happening? बोलिए या लिखिए — कोई भी भाषा.\nTell it once, in your own words. Your case file builds as you speak.\n\n(Prototype — no real names, IDs or account numbers.)",
     },
   ]);
   const [facts, setFacts] = useState<Fact[]>([]);
@@ -402,6 +402,17 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
 
         {/* composer */}
         <div className="sticky bottom-0 mt-4 bg-gradient-to-t from-paper via-paper to-transparent pb-1 pt-3">
+          {facts.length > 0 && (
+            <button
+              onClick={() => setCaseOpen(true)}
+              className="mb-2 flex w-full items-center justify-between rounded-lg border border-line-strong bg-card px-3 py-2 shadow-sm lg:hidden"
+            >
+              <span className="text-[12.5px] font-semibold text-navy">
+                Case file · {facts.length} facts · {confirmedCount} confirmed by you
+              </span>
+              <span className="text-[12px] text-ink-faint">open ▸</span>
+            </button>
+          )}
           <div className="mb-1.5 flex items-center justify-between px-1">
             <p className="text-[11px] text-ink-faint">
               {recState === "recording" && (
@@ -501,14 +512,6 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
 
       {/* case file: mobile sheet */}
       <div className="lg:hidden">
-        {!caseOpen && facts.length > 0 && (
-          <button
-            onClick={() => setCaseOpen(true)}
-            className="fixed bottom-24 right-4 z-40 rounded-full border border-line-strong bg-paper-raised px-4 py-2.5 text-[13px] font-medium text-navy shadow-lg"
-          >
-            Case file · {facts.length} facts
-          </button>
-        )}
         {caseOpen && (
           <div className="fixed inset-0 z-40 flex flex-col justify-end bg-ink/30" onClick={() => setCaseOpen(false)}>
             <div className="msg-in max-h-[80dvh] overflow-y-auto rounded-t-2xl bg-paper p-3 pb-6" onClick={(e) => e.stopPropagation()}>

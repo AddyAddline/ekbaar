@@ -48,6 +48,21 @@ export function PortalHeader({ active }: { active?: string }) {
             ))}
           </nav>
         </div>
+        <nav className="flex gap-2 overflow-x-auto px-4 pb-2.5 lg:hidden [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {nav.map((n) => (
+            <Link
+              key={n.href}
+              href={n.href}
+              className={`shrink-0 rounded-full px-3.5 py-1.5 text-[12.5px] font-semibold ${
+                active === n.href
+                  ? "bg-navy text-white"
+                  : "border border-line-strong text-ink-soft"
+              }`}
+            >
+              {n.label}
+            </Link>
+          ))}
+        </nav>
       </header>
     </>
   );

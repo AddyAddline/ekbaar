@@ -35,8 +35,12 @@ const LIMITS: { title: string; body: string }[] = [
     body: "The scam-call simulation is a fixed script built from the documented digital-arrest pattern, so its lessons stay accurate and sourced. It does not improvise.",
   },
   {
-    title: "Voice uses your browser's speech engine",
-    body: "Listening (Hindi, Marathi, English) and speaking use the browser's built-in Web Speech APIs — no audio ever reaches our server, and no key is needed. Support and voice quality vary by browser and device, which is why voice is always optional and typing always works. Spoken emergency instructions in Hindi and Marathi are our translations of the sourced MHA line.",
+    title: "Where your voice goes",
+    body: "When you speak, the recording is sent to our server and then to Google's Gemini API for transcription; replies are spoken with Gemini text-to-speech. Nothing is stored, and this is why the prototype says: no real names, IDs or account numbers. If these services are unreachable, the browser's own speech engine is used, and typing always works. Spoken emergency instructions in Hindi and Marathi are our translations of the sourced MHA line.",
+  },
+  {
+    title: "The conversation runs on a live model",
+    body: "The live intake is an OpenAI GPT model (via OpenRouter). It extracts facts and asks questions; it never routes. Routing — including the emergency interruption — stays deterministic and sourced, and runs before the model on every turn. If the model is unreachable, the sample case still shows the complete journey.",
   },
   {
     title: "We do not decide crimes or promise recovery",

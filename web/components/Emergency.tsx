@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { SpeakButton } from "@/components/VoiceControls";
 import type { VoiceLang } from "@/lib/voice";
-import { speak, ttsSupported } from "@/lib/voice";
+import { sayAloud, stopSaying } from "@/lib/say";
 
 // The one place in the product where red exists.
 // Wording boundary: docs/research/facts.md, digital-arrest section (PIB
@@ -51,13 +51,16 @@ export default function Emergency({ onResolved }: { onResolved: () => void }) {
   const [lang, setLang] = useState<VoiceLang>("en-IN");
   const c = COPY[lang];
 
-  // The screen appears after a user tap, so speech is permitted. Speak the
-  // instructions once per language selection; reading panic-proofs the screen.
+  // The screen appears after a user tap, so audio is permitted. Speak the
+  // instructions once per language selection (Gemini voice, browser
+  // fallback); a panicking caller may not be able to read calmly.
   useEffect(() => {
-    if (ttsSupported()) speak(c.spoken, lang, { rate: 0.95 });
-    return () => {
-      if (ttsSupported()) window.speechSynthesis.cancel();
-    };
+    sayAloud(c.spoken, {
+      voice: "Kore",
+      style: "Calm, unhurried, protective. Speak like a trusted family elder keeping someone safe. Language of the text.",
+      fallbackLang: lang,
+    });
+    return () => stopSaying();
   }, [lang, c.spoken]);
 
   return (
