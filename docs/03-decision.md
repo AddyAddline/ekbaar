@@ -31,7 +31,9 @@ The form becomes one output of the case. Filing is one event in the process, not
 
 ## The settled product decisions
 
-These were settled in grill rounds 1 to 3 on 26 and 27 August. Both teammates agreed. Do not reopen them without both.
+Rounds 1 to 3 were settled on 26 and 27 August; the portal-scope revision was settled with Advit on the evening of 27 August. Do not reopen without the team.
+
+**Portal-scope revision, 27 August evening.** The product is named **Cyber Satark (साइबर सतर्क)** and presents as the whole NCRP citizen experience rebuilt, not a companion app. Varun's brief says "you rebuild it entirely," and the live portal audit gave us the section map. Five sections: **Report** (the deep journey, unchanged as the demo spine), **Track** (verbatim official updates plus establishes / does-not / next), **Check a suspect** (synthetic registry search mirroring the official facility), **Learning corner** (the scripted digital-arrest call simulator — exceptional by design, taught by the same deterministic rules that power reporting), and **Contact & escalate** (the real portal buries escalation in a static officer table; ours is case-aware with a prepared escalation draft). Visual direction: official-modern, tricolor hairline, portal navy, using MeitY's UX4G status and neutral tokens with GIGW-style bilingual chrome — cite the borrowing, never claim endorsement. Depth stays uneven on purpose: Report is complete, Learn is excellent, the rest are small but genuinely working, and the limitations page says exactly that.
 
 1. **Positioning.** An independent prototype of how NCRP's citizen experience should work. Not a separate consumer startup, not another intermediary citizens must discover.
 2. **Promise.** A complete case and the next verified action. Never "solve your cybercrime" and never a recovery promise.

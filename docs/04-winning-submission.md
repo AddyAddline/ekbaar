@@ -42,7 +42,7 @@ Only numbers from `docs/research/facts.md` may appear.
 
 ### 0:18 to 1:00
 
-One uninterrupted mobile-width demo of the six beats in `docs/03-decision.md`:
+Open on the Cyber Satark portal home for two seconds — the reviewer must register "they rebuilt the whole portal" — then one uninterrupted mobile-width demo of the six beats in `docs/03-decision.md`:
 
 1. Meera describes what is happening; the case workspace fills beside the conversation.
 2. "Are you still on the call?" Yes. Emergency interruption. One red action.
@@ -67,7 +67,9 @@ Hold the before-and-after comparison. The reviewer must read it without pausing.
 
 ### 1:10 to 1:24
 
-Show the limitations screen. Read it without apologizing:
+Six seconds on the learning corner: answer one simulator beat and let the sourced "Tell #1" card appear — the line is "the rules that protect you are the rules that teach you." Then cut to the rest of the portal shell (track, suspect check, case-aware escalation) as three fast beats, two seconds each.
+
+Then show the limitations screen. Read it without apologizing:
 
 > This case is synthetic; we built it from the official process and documented scam patterns, not from a personal incident. NCRP filing and status sync are simulated because there is no public citizen sandbox or tracking API. The model suggests facts and routes; the citizen confirms every statement. Police and courts decide whether an offence occurred. We do not promise recovery.
 
