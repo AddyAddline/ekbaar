@@ -10,7 +10,7 @@ Cyber Satark rebuilds the portal around the incident, styled on MeitY's own UX4G
 
 The story then becomes a case file. An OpenAI model extracts candidate facts from the account and evidence; the citizen confirms each one; deterministic rules built by Codex from the NCRP citizen manual and the current complaint checklist control routing and validation. One confirmed record produces a bank report, a 1930 call card, and an NCRP-mapped complaint. After filing, official updates stay verbatim in an append-only record, with what each establishes, what it does not (a hold is not a refund), and the next action.
 
-The demo case is synthetic and labeled so. NCRP filing and status sync are simulated; there is no public citizen API. Live link: [URL]. Repo: [URL].
+The demo case is synthetic and labeled so. NCRP filing and status sync are simulated; there is no public citizen API. Live link: https://cyber-satark.vercel.app. Repo: https://github.com/AddyAddline/ekbaar.
 
 ---
 
