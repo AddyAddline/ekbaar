@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
           {
             role: "system",
             content:
-              "You extract candidate facts from a citizen's account of a suspected cybercrime incident in India. Return only facts stated in the text. Never invent amounts, names, numbers, or dates. Confidence reflects how explicitly the text states the fact. Fields you may use: transaction.amount_inr, transaction.date, transaction.utr, transaction.bank_or_wallet, incident.channel, suspect.mobile_display, suspect.bank_account, incident.claimed_authority.",
+              "You extract candidate facts from a citizen's account of a suspected cybercrime incident in India. The account may be in English, Hindi, Marathi, or a mix (Hinglish); understand it natively and write labels and values in English. Return only facts stated in the text. Never invent amounts, names, numbers, or dates. Confidence reflects how explicitly the text states the fact. Fields you may use: transaction.amount_inr, transaction.date, transaction.utr, transaction.bank_or_wallet, incident.channel, suspect.mobile_display, suspect.bank_account, incident.claimed_authority.",
           },
           { role: "user", content: story },
         ],

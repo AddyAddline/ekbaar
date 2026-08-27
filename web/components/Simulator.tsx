@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { SIM_BEATS, SIM_DEBRIEF } from "@/lib/simulator";
+import { speak, stopSpeaking, ttsSupported } from "@/lib/voice";
 
 type Phase = "ringing" | "beat" | "feedback" | "debrief";
 
@@ -11,11 +12,26 @@ export default function Simulator() {
   const [beat, setBeat] = useState(0);
   const [picked, setPicked] = useState<number | null>(null);
   const [safeCount, setSafeCount] = useState(0);
+  const [voiceOn, setVoiceOn] = useState(true);
+  const [ttsOk, setTtsOk] = useState(false);
+
+  useEffect(() => setTtsOk(ttsSupported()), []);
+  useEffect(() => () => stopSpeaking(), []);
 
   const current = SIM_BEATS[beat];
 
-  const answer = () => setPhase("beat");
+  // The caller speaks — slightly low pitch, pressing pace. Realism is the lesson.
+  const speakBeat = (idx: number) => {
+    if (voiceOn && ttsOk)
+      speak(SIM_BEATS[idx].caller.join(" "), "en-IN", { rate: 1.04, pitch: 0.85 });
+  };
+
+  const answer = () => {
+    setPhase("beat");
+    speakBeat(0);
+  };
   const choose = (i: number) => {
+    stopSpeaking();
     setPicked(i);
     if (current.choices[i].safe) setSafeCount((c) => c + 1);
     setPhase("feedback");
@@ -25,6 +41,7 @@ export default function Simulator() {
     if (beat + 1 < SIM_BEATS.length) {
       setBeat(beat + 1);
       setPhase("beat");
+      speakBeat(beat + 1);
     } else {
       setPhase("debrief");
     }
@@ -36,7 +53,22 @@ export default function Simulator() {
       <div className="overflow-hidden rounded-3xl border border-line-strong bg-navy-deep shadow-[0_18px_50px_rgba(12,34,88,0.35)]">
         <div className="flex items-center justify-between px-5 py-2.5 text-[10px] text-white/50">
           <span className="font-mono uppercase tracking-[0.14em]">Simulation — no real call</span>
-          <span className="stamp !border-white/40 !bg-transparent !text-white/60">synthetic</span>
+          <span className="flex items-center gap-2">
+            {ttsOk && (
+              <button
+                onClick={() => {
+                  if (voiceOn) stopSpeaking();
+                  setVoiceOn(!voiceOn);
+                }}
+                className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold ${
+                  voiceOn ? "border-saffron/70 text-saffron" : "border-white/30 text-white/50"
+                }`}
+              >
+                {voiceOn ? "🔊 caller voice on" : "🔇 caller voice off"}
+              </button>
+            )}
+            <span className="stamp !border-white/40 !bg-transparent !text-white/60">synthetic</span>
+          </span>
         </div>
 
         {phase === "ringing" && (

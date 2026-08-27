@@ -8,19 +8,21 @@ export type Route =
   | { kind: "no_loss_suspicious"; sourceId: "NCRP-FAQ-2024" }
   | { kind: "needs_more_facts"; sourceId: "product-safety-rule" };
 
-const LIFE_THREAT = /\b(kill|hurt|weapon|attack|suicide|self[- ]harm|physical danger)\b/i;
+// English + Hindi + Marathi keyword sets. Deterministic on purpose: the
+// emergency route must fire with no model, in the citizen's language.
+const LIFE_THREAT = /\b(kill|hurt|weapon|attack|suicide|self[- ]harm|physical danger)\b|जान से|खुदकुशी|आत्महत्या/i;
 
 const IMPERSONATION =
-  /\b(police|cbi|customs|court|judge|rbi|narcotics|ncb|ed|income tax officer|officer|crime branch)\b/i;
+  /\b(police|cbi|customs|court|judge|rbi|narcotics|ncb|ed|income tax officer|officer|crime branch)\b|पुलिस|पोलीस|सीबीआई|सीबीआय|कस्टम|कोर्ट|न्यायालय|जज|आरबीआई|अधिकारी|क्राइम ब्रांच/i;
 
 const LIVE_CALL =
-  /\b(still on|on a video call|on the call|on a whatsapp call|video call right now|calling me right now|keeps? calling|won'?t let me hang up|can'?t hang up|cannot hang up|not allowed to hang up|stay on the call|skype call)\b/i;
+  /\b(still on|on a video call|on the call|on a whatsapp call|video call right now|calling me right now|keeps? calling|won'?t let me hang up|can'?t hang up|cannot hang up|not allowed to hang up|stay on the call|skype call)\b|वीडियो कॉल|व्हिडिओ कॉल|कॉल पर हूँ|कॉल पर हूं|कॉलवर आहे|कॉल चालू|काटने नहीं|कट करू देत नाही/i;
 
 const COERCION =
-  /\b(arrest|warrant|digital arrest|verification account|do not tell|don'?t tell anyone|cannot tell anyone|keep it secret|secrecy|threaten(ed|ing)?|demand(ed|ing)?( another)? payment|pay (now|immediately)|more money)\b/i;
+  /\b(arrest|warrant|digital arrest|verification account|do not tell|don'?t tell anyone|cannot tell anyone|keep it secret|secrecy|threaten(ed|ing)?|demand(ed|ing)?( another)? payment|pay (now|immediately)|more money)\b|गिरफ्तार|अरेस्ट|वारंट|वॉरंट|डिजिटल अरेस्ट|किसी को मत बता|बताना मत|कोणाला सांगू नका|धमकी|और पैसे|पैसे भेजो|पैसे पाठवा|वेरिफिकेशन/i;
 
 const MONEY_LOST =
-  /\b(transferred|sent|paid|debited|deducted|lost|upi|imps|neft|rtgs)\b[\s\S]*?\b(rs\.?|rupees?|inr|₹|\d{3,})\b|\b(rs\.?|rupees?|inr|₹)\s?[\d,]+/i;
+  /\b(transferred|sent|paid|debited|deducted|lost|upi|imps|neft|rtgs)\b[\s\S]*?\b(rs\.?|rupees?|inr|₹|\d{3,})\b|\b(rs\.?|rupees?|inr|₹)\s?[\d,]+|रुपये|रुपए|भेज दिए|ट्रांसफर|यूपीआई|पैसे गेले|पैसे कट/i;
 
 export function triage(story: string): Route {
   // The emergency rules are evaluated before every other route.

@@ -71,12 +71,14 @@ export default function Home() {
               Report an incident
             </p>
             <h3 className="mt-2.5 text-[22px] font-bold leading-snug">
-              Describe what happened, in any words
+              Speak or type what happened —{" "}
+              <span className="font-devanagari">हिंदी, मराठी</span> or English
             </h3>
             <p className="mt-2 text-[13.5px] leading-relaxed text-white/75">
-              No category picker. The system detects live scams and interrupts to
-              protect you first — then builds your complaint from confirmed facts
-              and evidence.
+              No category picker, no form. The system detects live scams and
+              interrupts to protect you first — speaking its instructions out
+              loud — then builds your complaint from confirmed facts and
+              evidence.
             </p>
             <span className="mt-5 inline-block rounded-lg bg-white px-4 py-2.5 text-[13.5px] font-bold text-navy">
               Start — it takes your words, not forms

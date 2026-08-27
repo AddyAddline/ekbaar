@@ -5,6 +5,7 @@ import Link from "next/link";
 import CaseFile from "@/components/CaseFile";
 import Emergency from "@/components/Emergency";
 import Packets from "@/components/Packets";
+import { MicButton, SpeakButton } from "@/components/VoiceControls";
 import { triage } from "@/lib/rules";
 import type {
   ActionItem,
@@ -523,6 +524,11 @@ export default function CaseFlow({
                     {m.badge}
                   </span>
                 )}
+                {m.role === "system" && (
+                  <span className="mt-1.5 block">
+                    <SpeakButton text={m.text} />
+                  </span>
+                )}
               </div>
             </div>
           ))}
@@ -618,12 +624,13 @@ export default function CaseFlow({
                 e.preventDefault();
                 sendBlank();
               }}
-              className="flex gap-2"
+              className="flex items-center gap-2"
             >
+              <MicButton onFinal={(t) => setBlankInput(t)} onInterim={(t) => setBlankInput(t)} />
               <input
                 value={blankInput}
                 onChange={(e) => setBlankInput(e.target.value)}
-                placeholder="What happened? No real names or numbers, please."
+                placeholder="Speak or type — हिंदी · मराठी · English. No real names or numbers."
                 className="min-w-0 flex-1 rounded-lg border border-line-strong bg-paper-raised px-4 py-3 text-[14px] outline-none placeholder:text-ink-faint focus:border-navy"
               />
               <button
