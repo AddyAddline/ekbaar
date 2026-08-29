@@ -6,7 +6,7 @@ import CaseFile from "@/components/CaseFile";
 import Emergency from "@/components/Emergency";
 import Packets from "@/components/Packets";
 import { SpeakButton } from "@/components/VoiceControls";
-import { onSayInterrupt, prepareSaying, stopSaying } from "@/lib/say";
+import { onSayInterrupt, prepareSaying, sayClip, stopSaying } from "@/lib/say";
 import { triage } from "@/lib/rules";
 import { fmt, inferLang, LANG_LABEL, STR, VOICE_OF, type Lang } from "@/lib/i18n";
 import type { Fact, Msg, Packet, WorkflowState, CaseEvent } from "@/lib/types";
@@ -191,6 +191,9 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
     lsSet("cs-voice", yes ? "1" : "0");
     setPhase("done");
     say({ role: "system", text: STR[lang ?? "en"].welcome, uiOnly: true });
+    // They just said "speak aloud" - the very next message must keep that
+    // promise. Pre-generated clip, so it starts instantly.
+    if (yes) sayClip(`/onboard/welcome-${lang ?? "en"}.mp3`);
   };
 
   const resetLang = () => {
