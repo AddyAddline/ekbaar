@@ -6,7 +6,7 @@ import CaseFile from "@/components/CaseFile";
 import Emergency from "@/components/Emergency";
 import Packets from "@/components/Packets";
 import { SpeakButton } from "@/components/VoiceControls";
-import { onSayInterrupt, sayAloud, stopSaying } from "@/lib/say";
+import { onSayInterrupt, prepareSaying, stopSaying } from "@/lib/say";
 import { triage } from "@/lib/rules";
 import { fmt, inferLang, LANG_LABEL, STR, VOICE_OF, type Lang } from "@/lib/i18n";
 import type { Fact, Msg, Packet, WorkflowState, CaseEvent } from "@/lib/types";
@@ -202,15 +202,8 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
 
   /* -------- conversation -------- */
 
-  const playReply = (text: string, l: Lang) => {
-    if (!voiceOn) return;
-    void sayAloud(text, {
-      voice: VOICE,
-      fallbackLang: VOICE_OF[l],
-      onStart: () => setSpeaking(true),
-      onEnd: () => setSpeaking(false),
-    });
-  };
+  // Voice mode reveals the reply once: the thinking state runs until the
+  // audio is ready, then text and voice arrive together.
 
   const mergeFacts = (
     incoming: { field: string; label: string; value: string; confidence: number }[]
@@ -311,10 +304,24 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
         say({ role: "system", text: T.aiDown, uiOnly: true });
         return;
       }
-      say({ role: "system", text: d.reply });
-      mergeFacts(d.facts ?? []);
-      if (d.ready_to_review) setReady(true);
-      playReply(d.reply, sessLang);
+      const reveal = () => {
+        say({ role: "system", text: d.reply });
+        mergeFacts(d.facts ?? []);
+        if (d.ready_to_review) setReady(true);
+      };
+      if (voiceOn && d.reply) {
+        // One arrival: hold the thinking state while the voice is made
+        // (10s cap inside prepareSaying), then show and speak together.
+        const play = await prepareSaying(d.reply, {
+          voice: VOICE,
+          onStart: () => setSpeaking(true),
+          onEnd: () => setSpeaking(false),
+        });
+        reveal();
+        play?.();
+      } else {
+        reveal();
+      }
     } catch {
       setAiDown(true);
       say({ role: "system", text: T.aiDown, uiOnly: true });

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { SIM_BEATS, SIM_DEBRIEF } from "@/lib/simulator";
-import { sayAloud, stopSaying } from "@/lib/say";
+import { sayClip, stopSaying } from "@/lib/say";
 
 type Phase = "ringing" | "beat" | "feedback" | "debrief";
 
@@ -18,15 +18,10 @@ export default function Simulator() {
 
   const current = SIM_BEATS[beat];
 
-  // The caller speaks — officious, pressing. Realism is the lesson.
+  // The caller speaks the instant his lines appear — pre-generated clips,
+  // no API wait, so the voice can never start late or "at random".
   const speakBeat = (idx: number) => {
-    if (voiceOn)
-      sayAloud(SIM_BEATS[idx].caller.join(" "), {
-        voice: "Orus",
-        style:
-          "A stern, officious male caller impersonating a police officer on a bad phone line. Fast, pressuring, clipped Indian-English officialese. This is a labeled training simulation.",
-        fallbackLang: "en-IN",
-      });
+    if (voiceOn) sayClip(`/sim/beat${idx + 1}.mp3`);
   };
 
   const answer = () => {
