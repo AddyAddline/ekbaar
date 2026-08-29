@@ -18,7 +18,7 @@ export default function Simulator() {
 
   const current = SIM_BEATS[beat];
 
-  // The caller speaks the instant his lines appear — pre-generated clips,
+  // The caller speaks the instant his lines appear, pre-generated clips,
   // no API wait, so the voice can never start late or "at random".
   const speakBeat = (idx: number) => {
     if (voiceOn) sayClip(`/sim/beat${idx + 1}.mp3`);
@@ -50,7 +50,7 @@ export default function Simulator() {
       {/* phone frame */}
       <div className="overflow-hidden rounded-3xl border border-line-strong bg-navy-deep shadow-[0_18px_50px_rgba(12,34,88,0.35)]">
         <div className="flex items-center justify-between px-5 py-2.5 text-[10px] text-white/50">
-          <span className="font-mono uppercase tracking-[0.14em]">Simulation — no real call</span>
+          <span className="font-mono uppercase tracking-[0.14em]">Simulation, no real call</span>
           <span className="flex items-center gap-2">
             <button
               onClick={() => {
@@ -181,7 +181,7 @@ export default function Simulator() {
             </p>
             <p className="mt-1 text-[13px] text-white/70">
               {safeCount === SIM_BEATS.length
-                ? "You saw through every move. Most victims are smart people caught at a bad moment — now the tells are yours for life."
+                ? "You saw through every move. Most victims are smart people caught at a bad moment, now the tells are yours for life."
                 : "The choices that felt safest were the scam working. That is the point of practicing here."}
             </p>
             <div className="mt-5 rounded-xl border border-white/20 bg-white/5 p-4">
@@ -200,7 +200,7 @@ export default function Simulator() {
                 href="/report"
                 className="rounded-lg bg-white px-4 py-3 text-center text-[14px] font-bold text-navy-deep hover:bg-white/90"
               >
-                This happened to me or someone I know — report it
+                This happened to me or someone I know, report it
               </Link>
               <button
                 onClick={() => {

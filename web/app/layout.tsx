@@ -22,7 +22,7 @@ const notoMono = Noto_Sans_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Cyber Satark — the cyber crime portal, rebuilt around the citizen",
+  title: "Cyber Satark, the cyber crime portal, rebuilt around the citizen",
   description:
     "An independent prototype that rebuilds India's cybercrime reporting journey around the incident: interrupt an active scam, build one verified case file, learn the tells, and stay with the case until it is finished.",
 };

@@ -36,7 +36,7 @@ export default function ArchitecturePage() {
             <p className="mt-1 text-[12px] leading-snug text-navy/80">
               Digital-arrest interruption (MHA-sourced), 112, financial-fraud
               route, NCRP field validation. Every rule carries its source and
-              check date — this matrix was built by Codex from the official
+              check date, this matrix was built by Codex from the official
               manual and checklist.
             </p>
           </div>
@@ -44,8 +44,8 @@ export default function ArchitecturePage() {
             <p className={LABEL}>3 · Citizen confirmation</p>
             <p className="mt-1 text-[14px] font-medium">You approve every fact</p>
             <p className="mt-1 text-[12px] leading-snug text-ink-soft">
-              Extracted facts stay candidates — with evidence reference and
-              confidence — until confirmed. Nothing unconfirmed is filed.
+              Extracted facts stay candidates, with evidence reference and
+              confidence, until confirmed. Nothing unconfirmed is filed.
             </p>
           </div>
         </div>
@@ -75,7 +75,7 @@ export default function ArchitecturePage() {
             <p className={`${LABEL} !text-stop/70`}>Out · during the scam</p>
             <p className="mt-1 text-[14px] font-medium">Emergency actions</p>
             <p className="mt-1 text-[12px] leading-snug text-ink-soft">
-              End the call, 1930, bank — shown before any form, from sourced
+              End the call, 1930, bank, shown before any form, from sourced
               official guidance.
             </p>
           </div>
@@ -83,7 +83,7 @@ export default function ArchitecturePage() {
             <p className={LABEL}>Out · reporting</p>
             <p className="mt-1 text-[14px] font-medium">Recipient packets</p>
             <p className="mt-1 text-[12px] leading-snug text-ink-soft">
-              Bank report, 1930 call card, NCRP complaint — same facts, three
+              Bank report, 1930 call card, NCRP complaint, same facts, three
               shapes. Filing is simulated at the official handoff boundary; the
               citizen files on the real portal.
             </p>
@@ -100,7 +100,7 @@ export default function ArchitecturePage() {
       </div>
 
       <p className="mt-8 text-[11.5px] text-ink-faint">
-        No admin panel. No live government integration — there is no public
+        No admin panel. No live government integration, there is no public
         citizen API, and the boundary is drawn exactly where one would plug in.
       </p>
     </main>

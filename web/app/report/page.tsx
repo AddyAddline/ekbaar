@@ -27,7 +27,7 @@ export default async function ReportPage({
                   : "border border-line-strong text-ink-soft hover:border-navy"
               }`}
             >
-              Start your case<span className="hidden sm:inline"> — talk or type</span>
+              Start your case<span className="hidden sm:inline">, talk or type</span>
             </Link>
             <Link
               href="/report?mode=sample"

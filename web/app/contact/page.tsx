@@ -32,11 +32,11 @@ const STATES: Record<string, { nodal: string; grievance: string; email: string }
 
 const DRAFT = (state: string) => `To: Grievance Officer, ${state}
 
-Subject: Escalation — no actionable response on complaint DEMO-NCRP-2026-0002
+Subject: Escalation, no actionable response on complaint DEMO-NCRP-2026-0002
 
 Respected Sir/Madam,
 
-I filed complaint DEMO-NCRP-2026-0002 (financial fraud — digital-arrest
+I filed complaint DEMO-NCRP-2026-0002 (financial fraud, digital-arrest
 pattern, ₹1,20,000, transaction UTR 228834501277) on 27 August 2026.
 The last update, received the same day at 17:30, asked me to contact the
 police station named in my complaint record; no station response has been
@@ -48,7 +48,7 @@ evidence list and all official updates is attached.
 
 Complainant (synthetic demo): Meera D.
 
-[SYNTHETIC DEMO — this draft is generated from the demo case record.
+[SYNTHETIC DEMO, this draft is generated from the demo case record.
 Nothing is sent by this prototype.]`;
 
 export default function ContactPage() {
@@ -70,7 +70,7 @@ export default function ContactPage() {
         <p className="mt-3 max-w-xl text-[14.5px] leading-relaxed text-ink-soft">
           On the current portal, escalation is a 36-row table of officers with
           emails written as [at] and [dot]. Here, your case record already knows
-          your state, your reference and your timeline — so escalation is one
+          your state, your reference and your timeline, so escalation is one
           prepared email, not homework.
         </p>
 
@@ -79,7 +79,7 @@ export default function ContactPage() {
             {
               who: "1930",
               when: "Money moved in an online fraud",
-              how: "Call immediately — fast reporting helps banks attempt a hold.",
+              how: "Call immediately, fast reporting helps banks attempt a hold.",
               hot: true,
             },
             {
@@ -96,7 +96,7 @@ export default function ContactPage() {
             {
               who: "Grievance officer",
               when: "Complaint filed, no response",
-              how: "Your state's escalation path — the tool below writes the letter.",
+              how: "Your state's escalation path, the tool below writes the letter.",
             },
           ].map((c) => (
             <div
@@ -137,9 +137,9 @@ export default function ContactPage() {
             <div className="rounded-xl border border-line bg-card p-4 text-[13px] leading-relaxed text-ink-soft">
               <p className="font-bold text-ink">Always available</p>
               <p className="mt-1">
-                Helpline <b className="text-navy">1930</b> — financial cyber fraud
+                Helpline <b className="text-navy">1930</b>, financial cyber fraud
                 <br />
-                Emergency <b className="text-navy">112</b> — any threat to safety
+                Emergency <b className="text-navy">112</b>, any threat to safety
               </p>
             </div>
           </div>

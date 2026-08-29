@@ -12,7 +12,7 @@ export function PortalHeader({ active }: { active?: string }) {
     <>
       <div className="tricolor" />
       <div className="flex items-center justify-between border-b border-line bg-card px-4 py-1.5 text-[11.5px] text-ink-faint sm:px-7">
-        <span>An independent hackathon prototype — not a government service</span>
+        <span>An independent hackathon prototype, not a government service</span>
         <span className="hidden sm:block">
           <span className="font-devanagari">हिन्दी</span> | English · A− A+
         </span>

@@ -1,5 +1,5 @@
 // Browser-native voice: Web Speech API for listening, speechSynthesis for
-// speaking. Deliberately no server dependency — voice can never take the
+// speaking. Deliberately no server dependency, voice can never take the
 // public link down. Everything degrades to text (feature-detected).
 
 export type VoiceLang = "en-IN" | "hi-IN" | "mr-IN";

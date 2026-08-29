@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 // Speech in: the browser records (MediaRecorder, webm/opus) and we
-// transcribe with Gemini — Hindi, Marathi, Tamil, Bengali, Hinglish,
+// transcribe with Gemini, Hindi, Marathi, Tamil, Bengali, Hinglish,
 // anything. Verbatim, same language, no embellishment.
 
 export const runtime = "nodejs";
@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
   } catch {
     return NextResponse.json({ error: "bad_request" }, { status: 400 });
   }
-  // ~6 MB base64 cap ≈ 90s of opus — plenty for one turn.
+  // ~6 MB base64 cap ≈ 90s of opus, plenty for one turn.
   if (!audio || audio.length > 6_000_000) {
     return NextResponse.json({ error: "bad_audio" }, { status: 400 });
   }

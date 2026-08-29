@@ -106,7 +106,7 @@ export const STR: Record<Lang, Strings> = {
     aiDown:
       "Live AI isn't reachable right now, so I can't hold a conversation, but nothing is lost. The sample case shows the complete journey, and the emergency guard still works: it doesn't need AI.",
     draftStamp: "Draft · this device only",
-    changeLang: "भाषा · change",
+    changeLang: "change",
     starters: [
       "Someone saying they are police has me on a video call and wants money",
       "I paid a seller on Instagram and got blocked",
@@ -160,7 +160,7 @@ export const STR: Record<Lang, Strings> = {
     aiDown:
       "लाइव AI अभी उपलब्ध नहीं है, इसलिए बातचीत नहीं हो पा रही, लेकिन कुछ खोया नहीं है। Sample case में पूरा सफ़र दिखता है, और आपातकालीन सुरक्षा अब भी काम करती है: उसे AI की ज़रूरत नहीं।",
     draftStamp: "ड्राफ्ट · सिर्फ़ इस डिवाइस पर",
-    changeLang: "भाषा · बदलें",
+    changeLang: "बदलें",
     starters: [
       "“सीबीआई अफ़सर” वीडियो कॉल पर हैं, कहते हैं गिरफ्तार करेंगे, पैसे मांग रहे हैं",
       "मैंने Instagram पर एक विक्रेता को पैसे भेजे और उसने ब्लॉक कर दिया",
@@ -214,7 +214,7 @@ export const STR: Record<Lang, Strings> = {
     aiDown:
       "लाइव्ह AI सध्या उपलब्ध नाही, म्हणून संवाद होऊ शकत नाही, पण काहीही हरवलेलं नाही. Sample case मध्ये पूर्ण प्रवास दिसतो, आणि आपत्कालीन संरक्षण अजूनही चालू आहे: त्याला AI ची गरज नाही.",
     draftStamp: "ड्राफ्ट · फक्त या डिव्हाइसवर",
-    changeLang: "भाषा · बदला",
+    changeLang: "बदला",
     starters: [
       "“पोलीस” म्हणणारे व्हिडिओ कॉलवर आहेत, पैसे मागत आहेत, अटक करू म्हणतात",
       "मी Instagram वरील विक्रेत्याला पैसे पाठवले आणि त्याने ब्लॉक केलं",

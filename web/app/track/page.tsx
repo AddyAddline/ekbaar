@@ -21,7 +21,7 @@ const EVENTS = [
     explain: {
       establishes: "Your complaint exists in the system with a reference number.",
       not: "An acknowledgement is not an FIR. No officer is assigned yet.",
-      next: "Keep the reference safe — every later step quotes it.",
+      next: "Keep the reference safe, every later step quotes it.",
     },
   },
   {
@@ -33,7 +33,7 @@ const EVENTS = [
       establishes:
         "₹74,000 of the ₹1,20,000 is held somewhere in the banking chain, and a police station is now named on your case.",
       not: "A hold is not a refund. It does not say the money is coming back, and it does not close the case.",
-      next: "Contact the named police station with your acknowledgement number — everything they'll ask for is in your case file.",
+      next: "Contact the named police station with your acknowledgement number, everything they'll ask for is in your case file.",
     },
   },
 ];
@@ -66,7 +66,7 @@ export default function TrackPage() {
         <p className="mt-3 max-w-lg text-[14.5px] leading-relaxed text-ink-soft">
           Every official message is preserved exactly as it arrived, then
           translated: what it establishes, what it doesn&apos;t, and your next
-          action. No OTP maze — one reference number.
+          action. No OTP maze, one reference number.
         </p>
 
         <form
@@ -91,7 +91,7 @@ export default function TrackPage() {
         </form>
         <p className="mt-2 text-[11.5px] text-ink-faint">
           The demo acknowledgement is prefilled. Real NCRP tracking needs OTP +
-          CAPTCHA and has no public API — sync here is simulated and labeled.
+          CAPTCHA and has no public API, sync here is simulated and labeled.
         </p>
 
         {error && (

@@ -75,7 +75,7 @@ export default function Emergency({
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center px-6 py-10">
         <div className="mb-5 flex items-center justify-between">
           <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/60">
-            Pause — before anything else
+            Pause, before anything else
           </p>
           <div className="flex gap-1">
             {LANGS.map((l) => (
@@ -121,7 +121,7 @@ export default function Emergency({
             >
               <span className="block text-[15px] font-semibold">Call 1930</span>
               <span className="text-[12px] text-white/65">
-                National cybercrime helpline — report the transfer you already made
+                National cybercrime helpline, report the transfer you already made
               </span>
             </a>
             <div className="rounded-lg border border-white/25 bg-white/10 px-4 py-3">
@@ -138,7 +138,7 @@ export default function Emergency({
               onClick={onResolved}
               className="mt-4 w-full rounded-lg bg-white px-6 py-3.5 text-[15px] font-semibold text-navy-deep transition-colors hover:bg-white/90"
             >
-              The call has ended — continue my case
+              The call has ended, continue my case
             </button>
           </div>
         )}

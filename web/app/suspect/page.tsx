@@ -26,7 +26,7 @@ export default function SuspectPage() {
         </h1>
         <p className="mt-3 max-w-lg text-[14.5px] leading-relaxed text-ink-soft">
           A number, UPI ID, account or website that has already been reported
-          shows up here. Checked against a <b>synthetic registry</b> — this
+          shows up here. Checked against a <b>synthetic registry</b>, this
           prototype mirrors the official &ldquo;Report &amp; Check Suspect&rdquo; facility
           in shape, not in data.
         </p>
@@ -60,7 +60,7 @@ export default function SuspectPage() {
                 <p className="mt-1 text-[13px] leading-relaxed text-ink-soft">
                   Important: this is <b>not proof of safety</b>. New scam numbers
                   and accounts appear daily. If something feels wrong, it
-                  probably is —{" "}
+                  probably is -{" "}
                   <Link href="/learn" className="text-navy underline underline-offset-2">
                     learn the tells
                   </Link>{" "}
@@ -90,7 +90,7 @@ export default function SuspectPage() {
                       href="/report"
                       className="rounded-md bg-navy px-3.5 py-1.5 text-[12px] font-bold text-white hover:bg-navy-deep"
                     >
-                      I dealt with this — report it
+                      I dealt with this, report it
                     </Link>
                     <Link
                       href="/learn"

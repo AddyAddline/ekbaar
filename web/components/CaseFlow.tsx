@@ -196,8 +196,8 @@ export default function CaseFlow({
       role: "system",
       text:
         mode === "guided"
-          ? "This is the guided demo — a synthetic case, played back exactly as the product handles it. Tap the suggested replies to move through it.\n\nWhat's happening? Tell it once, in your own words. You will not be asked to pick a category."
-          : "What's happening? Tell it once, in your own words. You will not be asked to pick a category.\n\nThis is a prototype — do not enter real names, account numbers or ID numbers.",
+          ? "This is the guided demo, a synthetic case, played back exactly as the product handles it. Tap the suggested replies to move through it.\n\nWhat's happening? Tell it once, in your own words. You will not be asked to pick a category."
+          : "What's happening? Tell it once, in your own words. You will not be asked to pick a category.\n\nThis is a prototype, do not enter real names, account numbers or ID numbers.",
     },
   ]);
   const [facts, setFacts] = useState<Fact[]>([]);
@@ -228,11 +228,11 @@ export default function CaseFlow({
   const sendStory = () => {
     say({ role: "user", text: MEERA_STORY });
     setFacts(STORY_FACTS);
-    note("3 facts added to your case file — nothing is final until you confirm it.");
+    note("3 facts added to your case file, nothing is final until you confirm it.");
     setTimeout(() => {
       say({
         role: "system",
-        text: "This matches a documented digital-arrest scam pattern — callers posing as police over a video call, a payment already made, and an instruction to stay silent.\n\nBefore anything else: are you still on the call?",
+        text: "This matches a documented digital-arrest scam pattern, callers posing as police over a video call, a payment already made, and an instruction to stay silent.\n\nBefore anything else: are you still on the call?",
         badge: "deterministic rule · MHA PIB-2068698",
       });
       setStage("asked_call");
@@ -240,7 +240,7 @@ export default function CaseFlow({
   };
 
   const answerCall = (yes: boolean) => {
-    say({ role: "user", text: yes ? "Yes — they are on the line right now." : "No, the call has ended." });
+    say({ role: "user", text: yes ? "Yes, they are on the line right now." : "No, the call has ended." });
     if (yes) {
       setWorkflow("urgent action required");
       setTimeout(() => setStage("emergency"), 500);
@@ -253,7 +253,7 @@ export default function CaseFlow({
     setStage("post_emergency");
     setWorkflow("collecting evidence");
     setActions([
-      { id: "a-end", label: "End the call — no more money sent", sourceId: "PIB-2068698", status: "done" },
+      { id: "a-end", label: "End the call, no more money sent", sourceId: "PIB-2068698", status: "done" },
       { id: "a-1930", label: "Call 1930 and report the transfer", sourceId: "MHA-CFCFRMS-2026", status: "done" },
       { id: "a-bank", label: "Notify the bank's fraud channel", sourceId: "MHA-CFCFRMS-2026", status: "done" },
       { id: "a-ncrp", label: "Prepare the NCRP complaint", sourceId: "NCRP-CHECKLIST-2024", status: "pending" },
@@ -286,10 +286,10 @@ export default function CaseFlow({
       ]);
       setTimeout(() => {
         setFacts((p) => [...p.filter((f) => f.id !== "f-amount-claim"), ...RECEIPT_FACTS]);
-        note("4 facts read from the receipt — each one shows where it came from.");
+        note("4 facts read from the receipt, each one shows where it came from.");
         say({
           role: "system",
-          text: "Read from the receipt: the amount, the UPI reference, the date, and the account the money went to. Each is waiting for your confirmation in the case file — I never file anything you haven't confirmed.",
+          text: "Read from the receipt: the amount, the UPI reference, the date, and the account the money went to. Each is waiting for your confirmation in the case file, I never file anything you haven't confirmed.",
         });
       }, 700);
     }
@@ -304,7 +304,7 @@ export default function CaseFlow({
         note("The caller's number and their second demand are now in the record.");
         say({
           role: "system",
-          text: "The screenshot adds the caller's number and their demand for a second payment — that demand is evidence, and it stays in the original screenshot untouched.",
+          text: "The screenshot adds the caller's number and their demand for a second payment, that demand is evidence, and it stays in the original screenshot untouched.",
         });
       }, 700);
     }
@@ -317,7 +317,7 @@ export default function CaseFlow({
     setCaseOpen(true);
     say({
       role: "system",
-      text: "Look at the case file and confirm each fact. If anything is wrong, this is the moment it gets fixed — before it reaches the bank, 1930 or the complaint.",
+      text: "Look at the case file and confirm each fact. If anything is wrong, this is the moment it gets fixed, before it reaches the bank, 1930 or the complaint.",
     });
   };
 
@@ -338,7 +338,7 @@ export default function CaseFlow({
       note("Every fact is confirmed by you. One record, three recipients.");
       say({
         role: "system",
-        text: "Confirmed. You told this story once. From that one record, here is exactly what each place needs — nothing retyped, nothing forgotten:",
+        text: "Confirmed. You told this story once. From that one record, here is exactly what each place needs, nothing retyped, nothing forgotten:",
       });
       setShowPackets(true);
       setStage("review");
@@ -347,7 +347,7 @@ export default function CaseFlow({
   }, [allConfirmed, stage]);
 
   const simulateFiling = () => {
-    say({ role: "user", text: "File the NCRP complaint. (Simulated — nothing is really sent.)" });
+    say({ role: "user", text: "File the NCRP complaint. (Simulated, nothing is really sent.)" });
     setWorkflow("filed and acknowledged");
     setActions((p) => p.map((a) => (a.id === "a-ncrp" ? { ...a, status: "done" } : a)));
     setEvents((p) => [
@@ -363,7 +363,7 @@ export default function CaseFlow({
     setTimeout(() => {
       say({
         role: "system",
-        text: "Acknowledged — and here is something the form never tells you: this reference number is an acknowledgement, not an FIR. Your case file keeps them separate, because the difference matters later.\n\nMost tools end here. Your case doesn't.",
+        text: "Acknowledged, and here is something the form never tells you: this reference number is an acknowledgement, not an FIR. Your case file keeps them separate, because the difference matters later.\n\nMost tools end here. Your case doesn't.",
       });
       setStage("filed");
     }, 800);
@@ -384,7 +384,7 @@ export default function CaseFlow({
           simulated: true,
         },
       ]);
-      note("An official update arrived. The original text is preserved — the explanation is separate.");
+      note("An official update arrived. The original text is preserved, the explanation is separate.");
       setShowExplain(true);
       setTimeout(() => {
         setWorkflow("citizen action required");
@@ -423,7 +423,7 @@ export default function CaseFlow({
     } else if (route.kind === "financial_fraud") {
       say({
         role: "system",
-        text: "This reads like financial cyberfraud. The route is: notify your bank's fraud channel, call 1930, then prepare the complaint on cybercrime.gov.in.\n\nThis prototype fully prepares financial-fraud cases only — the guided demo shows that complete journey.",
+        text: "This reads like financial cyberfraud. The route is: notify your bank's fraud channel, call 1930, then prepare the complaint on cybercrime.gov.in.\n\nThis prototype fully prepares financial-fraud cases only, the guided demo shows that complete journey.",
         badge: "deterministic rule · MHA CFCFRMS",
       });
     } else if (route.kind === "needs_more_facts") {
@@ -434,7 +434,7 @@ export default function CaseFlow({
     } else {
       say({
         role: "system",
-        text: "No money lost — good. If someone or something feels suspicious, cybercrime.gov.in has a “Report and Check Suspect” search, and reports without financial loss go through the same portal. This prototype fully prepares financial-fraud cases only.",
+        text: "No money lost, good. If someone or something feels suspicious, cybercrime.gov.in has a “Report and Check Suspect” search, and reports without financial loss go through the same portal. This prototype fully prepares financial-fraud cases only.",
         badge: "deterministic rule · NCRP FAQ",
       });
     }
@@ -460,7 +460,7 @@ export default function CaseFlow({
           })
         );
         setFacts((p) => [...p, ...newFacts]);
-        note(`${newFacts.length} candidate facts suggested — confirm or ignore each one.`);
+        note(`${newFacts.length} candidate facts suggested, confirm or ignore each one.`);
       }
     } catch {
       /* fallback: statement-only, no model facts */
@@ -474,7 +474,7 @@ export default function CaseFlow({
   if (mode === "guided") {
     if (stage === "intro") chips.push({ label: "▸ Play Meera's message", onTap: sendStory, primary: true });
     if (stage === "asked_call") {
-      chips.push({ label: "Yes — they are on the line", onTap: () => answerCall(true), primary: true });
+      chips.push({ label: "Yes, they are on the line", onTap: () => answerCall(true), primary: true });
       chips.push({ label: "No, the call ended", onTap: () => answerCall(false) });
     }
     if (stage === "evidence") {
@@ -541,7 +541,7 @@ export default function CaseFlow({
 
           {showLater && (
             <div className="time-break py-6 text-center font-mono text-[11px] uppercase tracking-[0.18em] text-ink-faint">
-              — later that evening —
+             , later that evening -
             </div>
           )}
 
@@ -642,7 +642,7 @@ export default function CaseFlow({
               <input
                 value={blankInput}
                 onChange={(e) => setBlankInput(e.target.value)}
-                placeholder="Speak or type — हिंदी · मराठी · English. No real names or numbers."
+                placeholder="Speak or type, हिंदी · मराठी · English. No real names or numbers."
                 className="min-w-0 flex-1 rounded-lg border border-line-strong bg-paper-raised px-4 py-3 text-[14px] outline-none placeholder:text-ink-faint focus:border-navy"
               />
               <button

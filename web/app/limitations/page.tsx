@@ -28,7 +28,7 @@ const LIMITS: { title: string; body: string }[] = [
   },
   {
     title: "The model suggests; you decide; rules route",
-    body: "AI (an OpenAI model) extracts candidate facts from your words. Every fact waits for your confirmation. Routing — including the digital-arrest interruption — is deterministic rules sourced to official documents, never a model decision. If the model is unavailable, the journey still works.",
+    body: "AI (an OpenAI model) extracts candidate facts from your words. Every fact waits for your confirmation. Routing, including the digital-arrest interruption, is deterministic rules sourced to official documents, never a model decision. If the model is unavailable, the journey still works.",
   },
   {
     title: "The simulator is scripted, not generative",
@@ -40,7 +40,7 @@ const LIMITS: { title: string; body: string }[] = [
   },
   {
     title: "The conversation runs on a live model",
-    body: "The live intake is an OpenAI GPT model (via OpenRouter). It extracts facts and asks questions; it never routes. Routing — including the emergency interruption — stays deterministic and sourced, and runs before the model on every turn. If the model is unreachable, the sample case still shows the complete journey.",
+    body: "The live intake is an OpenAI GPT model (via OpenRouter). It extracts facts and asks questions; it never routes. Routing, including the emergency interruption, stays deterministic and sourced, and runs before the model on every turn. If the model is unreachable, the sample case still shows the complete journey.",
   },
   {
     title: "We do not decide crimes or promise recovery",

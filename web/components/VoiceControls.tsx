@@ -9,7 +9,7 @@ import {
 } from "@/lib/voice";
 import { onSayInterrupt, sayAloud, stopSaying } from "@/lib/say";
 
-/* A speaker button that reads one message aloud — same Gemini voice and the
+/* A speaker button that reads one message aloud, same Gemini voice and the
    same single audio channel as everything else (browser voice only as a
    fallback inside sayAloud). Starting any other playback resets this one. */
 export function SpeakButton({
@@ -32,13 +32,16 @@ export function SpeakButton({
         if (state !== "idle") {
           stopSaying();
         } else {
-          setState("loading");
-          sayAloud(text, {
+          // Start the call first: its synchronous prefix broadcasts the
+          // stop-everything interrupt, which would otherwise reset the
+          // loading state we are about to set.
+          void sayAloud(text, {
             voice,
             fallbackLang: lang,
             onStart: () => setState("playing"),
             onEnd: () => setState("idle"),
           });
+          setState("loading");
         }
       }}
       className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold transition-colors ${

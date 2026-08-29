@@ -26,7 +26,7 @@ export function stopSaying() {
   notify();
 }
 
-/* Play a pre-generated static clip through the single audio channel —
+/* Play a pre-generated static clip through the single audio channel -
    instant start, no API wait. Used where the script is fixed (onboarding
    demo, simulator caller). */
 export function sayClip(url: string, opts: { onStart?: () => void; onEnd?: () => void } = {}) {
@@ -42,7 +42,7 @@ export function sayClip(url: string, opts: { onStart?: () => void; onEnd?: () =>
 }
 
 /* Fetch the voice first, play later: lets the caller reveal text and audio
-   in one arrival. Resolves null on failure/timeout — the caller reveals
+   in one arrival. Resolves null on failure/timeout, the caller reveals
    silently; the text is never held hostage to the voice. */
 export async function prepareSaying(
   text: string,
@@ -53,7 +53,7 @@ export async function prepareSaying(
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text: text.slice(0, 850), voice: opts.voice ?? "Kore", style: opts.style ?? "" }),
-      signal: AbortSignal.timeout(10000),
+      signal: AbortSignal.timeout(20000),
     });
     if (!r.ok) return null;
     const url = URL.createObjectURL(await r.blob());

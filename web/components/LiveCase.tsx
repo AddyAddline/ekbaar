@@ -454,7 +454,7 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
                 onClick={resetLang}
                 className="rounded-full border border-line-strong bg-card px-2.5 py-1 text-[11px] font-semibold text-ink-soft hover:border-navy hover:text-navy"
               >
-                {t.changeLang}
+                {LANG_LABEL[lang]} · {t.changeLang}
               </button>
             </div>
           )}

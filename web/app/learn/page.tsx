@@ -54,7 +54,7 @@ const LESSONS = [
   },
   {
     title: "Acknowledgement ≠ FIR. Hold ≠ refund.",
-    body: "A complaint acknowledgement number is not an FIR. An “amount put on hold” is not money returned. Knowing the difference is how you know what to do next — our tracker spells it out on every update.",
+    body: "A complaint acknowledgement number is not an FIR. An “amount put on hold” is not money returned. Knowing the difference is how you know what to do next, our tracker spells it out on every update.",
     source: "NCRP citizen manual & FAQ, checked Aug 2026",
   },
 ];
@@ -73,7 +73,7 @@ export default function LearnPage() {
         </h1>
         <p className="mt-3 max-w-xl text-[14.5px] leading-relaxed text-ink-soft">
           The portal&apos;s learning corner is a pile of PDFs. Ours is practice: take
-          the call in a sandbox, feel the pressure, and learn the three tells —
+          the call in a sandbox, feel the pressure, and learn the three tells -
           taught by the same rules that power our reporting journey.
         </p>
 
@@ -83,7 +83,7 @@ export default function LearnPage() {
           </div>
           <div className="space-y-4">
             <p className="text-[11px] font-bold uppercase tracking-[0.09em] text-ink-faint">
-              The facts behind the simulator — every claim sourced
+              The facts behind the simulator, every claim sourced
             </p>
             {LESSONS.map((l) => (
               <div key={l.title} className="rounded-xl border border-line bg-card p-5">
@@ -139,7 +139,7 @@ export default function LearnPage() {
             <Link href="/report" className="font-semibold text-navy underline underline-offset-2">
               Report it now
             </Link>{" "}
-            — the same rules will walk you through it. And check any number or UPI ID in{" "}
+           , the same rules will walk you through it. And check any number or UPI ID in{" "}
             <Link href="/suspect" className="font-semibold text-navy underline underline-offset-2">
               the suspect registry
             </Link>{" "}

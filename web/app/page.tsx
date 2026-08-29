@@ -44,7 +44,7 @@ export default function Home() {
           <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-ink-soft">
             One case record carries you from &ldquo;what happened?&rdquo; through the
             bank, the 1930 helpline, the complaint, and every official update
-            after it — in your words, not the government&apos;s categories.
+            after it, in your words, not the government&apos;s categories.
           </p>
           <div className="mt-6 flex flex-wrap gap-x-9 gap-y-3 text-[12px] text-ink-faint">
             {[
@@ -70,17 +70,17 @@ export default function Home() {
               Report an incident
             </p>
             <h3 className="mt-2.5 text-[22px] font-bold leading-snug">
-              Speak or type what happened —{" "}
+              Speak or type what happened -{" "}
               <span className="font-devanagari">हिंदी, मराठी</span> or English
             </h3>
             <p className="mt-2 text-[13.5px] leading-relaxed text-white/75">
               No category picker, no form. The system detects live scams and
-              interrupts to protect you first — speaking its instructions out
-              loud — then builds your complaint from confirmed facts and
+              interrupts to protect you first, speaking its instructions out
+              loud, then builds your complaint from confirmed facts and
               evidence.
             </p>
             <span className="mt-5 inline-block rounded-lg bg-white px-4 py-2.5 text-[13.5px] font-bold text-navy">
-              Start — it takes your words, not forms
+              Start, it takes your words, not forms
             </span>
           </Link>
           <Card

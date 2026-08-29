@@ -20,7 +20,7 @@ export const REGISTRY: RegistryEntry[] = [
     normalized: ["98xxxxx431", "9198xxxxx431", "98431"],
     reports: 14,
     firstReported: "2026-07-30",
-    pattern: "Digital arrest — impersonating police over WhatsApp video calls",
+    pattern: "Digital arrest, impersonating police over WhatsApp video calls",
     status: "forwarded to LEA",
   },
   {
