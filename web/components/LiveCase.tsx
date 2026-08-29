@@ -8,74 +8,105 @@ import Packets from "@/components/Packets";
 import { SpeakButton } from "@/components/VoiceControls";
 import { onSayInterrupt, sayAloud, stopSaying } from "@/lib/say";
 import { triage } from "@/lib/rules";
+import { fmt, inferLang, LANG_LABEL, STR, VOICE_OF, type Lang } from "@/lib/i18n";
 import type { Fact, Msg, Packet, WorkflowState, CaseEvent } from "@/lib/types";
 
 // The live intake: speak or type in any language. Deterministic rules guard
 // every turn; the model (OpenRouter) understands, extracts, and asks for the
 // next missing fact; Gemini gives it ears (STT) and a voice (TTS).
+//
+// The session language is picked (or implied) once and every surface the
+// citizen touches speaks it. Onboarding beats are ui-only bubbles: they are
+// never sent to the model.
 
-const VOICES = [
-  { id: "Kore", label: "Kore · calm" },
-  { id: "Achernar", label: "Achernar · warm" },
-  { id: "Charon", label: "Charon · steady" },
-  { id: "Aoede", label: "Aoede · light" },
-  { id: "Puck", label: "Puck · bright" },
-  { id: "Leda", label: "Leda · clear" },
-  { id: "Orus", label: "Orus · deep" },
-  { id: "Zephyr", label: "Zephyr · soft" },
-];
+type LMsg = Msg & { uiOnly?: boolean };
 
-const STARTERS = [
-  "मेरे साथ UPI फ्रॉड हुआ है, पैसे कट गए",
-  "I paid a seller on Instagram and got blocked",
-  "मला एका अनोळखी नंबरवरून धमकी आली आहे",
-];
+const VOICE = "Kore";
+
+// Beat 1 is deliberately trilingual and deterministic, it must work with no
+// model and before any language is known.
+const LANG_PICK =
+  "आपका केस यहीं शुरू होता है, मैं किस भाषा में बात करूँ?\nमी कोणत्या भाषेत बोलू? · Which language should I talk to you in?";
+
+const isLang = (v: string | null): v is Lang => v === "en" || v === "hi" || v === "mr";
+
+const lsGet = (k: string) => {
+  try {
+    return localStorage.getItem(k);
+  } catch {
+    return null;
+  }
+};
+const lsSet = (k: string, v: string) => {
+  try {
+    localStorage.setItem(k, v);
+  } catch {
+    /* storage unavailable, session still works */
+  }
+};
+const lsDel = (k: string) => {
+  try {
+    localStorage.removeItem(k);
+  } catch {
+    /* ignore */
+  }
+};
 
 let idc = 0;
 const nid = () => `lm${++idc}`;
 
-/* The waiting moment says what is actually happening, staged over time. */
-function Thinking() {
+/* The waiting moment says what is actually happening, staged over time.
+   After 2.5s a flat "did you know" card joins it, clearly not the reply. */
+function Thinking({ lang }: { lang: Lang }) {
+  const s = STR[lang];
   const [stage, setStage] = useState(0);
+  const [tip, setTip] = useState<number | null>(null);
   useEffect(() => {
+    let rot: ReturnType<typeof setInterval> | undefined;
     const t1 = setTimeout(() => setStage(1), 2600);
     const t2 = setTimeout(() => setStage(2), 5600);
+    const t3 = setTimeout(() => {
+      setTip(0);
+      rot = setInterval(() => setTip((v) => ((v ?? 0) + 1) % s.tips.length), 5000);
+    }, 2500);
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
+      clearTimeout(t3);
+      if (rot) clearInterval(rot);
     };
-  }, []);
-  const lines = [
-    "Reading your words…",
-    "Checking against known scam patterns…",
-    "Working out the one thing to ask next…",
-  ];
+  }, [s.tips.length]);
   return (
-    <div className="msg-in flex justify-start">
-      <div className="flex items-center gap-2.5 rounded-xl rounded-bl-sm border border-line bg-paper-raised px-4 py-3">
-        <span className="flex gap-1">
-          {[0, 1, 2].map((i) => (
-            <span
-              key={i}
-              className="h-1.5 w-1.5 animate-bounce rounded-full bg-navy/50"
-              style={{ animationDelay: `${i * 0.15}s` }}
-            />
-          ))}
-        </span>
-        <span className="text-[12.5px] text-ink-faint">{lines[stage]}</span>
+    <div className="msg-in space-y-2">
+      <div className="flex justify-start">
+        <div className="flex items-center gap-2.5 rounded-xl rounded-bl-sm border border-line bg-paper-raised px-4 py-3">
+          <span className="flex gap-1">
+            {[0, 1, 2].map((i) => (
+              <span
+                key={i}
+                className="h-1.5 w-1.5 animate-bounce rounded-full bg-navy/50"
+                style={{ animationDelay: `${i * 0.15}s` }}
+              />
+            ))}
+          </span>
+          <span className="text-[12.5px] text-ink-faint">{s.thinking[stage]}</span>
+        </div>
       </div>
+      {tip !== null && (
+        <div className="max-w-[85%] border border-line bg-mono-bg px-3.5 py-2.5">
+          <p className="font-mono text-[10px] uppercase tracking-wider text-ink-faint">{s.didYouKnow}</p>
+          <p className="mt-1 text-[12px] leading-snug text-ink-soft">{s.tips[tip].text}</p>
+          <p className="mt-0.5 font-mono text-[10px] text-ink-faint">{s.tips[tip].source}</p>
+        </div>
+      )}
     </div>
   );
 }
 
 export default function LiveCase({ emergencyStart = false }: { emergencyStart?: boolean }) {
-  const [msgs, setMsgs] = useState<Msg[]>([
-    {
-      id: nid(),
-      role: "system",
-      text: "What's happening? बोलिए या लिखिए — कोई भी भाषा.\nTell it once, in your own words. Your case file builds as you speak.\n\n(Prototype — no real names, IDs or account numbers.)",
-    },
-  ]);
+  const [lang, setLang] = useState<Lang | null>(null);
+  const [phase, setPhase] = useState<"boot" | "lang" | "voice" | "done">("boot");
+  const [msgs, setMsgs] = useState<LMsg[]>([]);
   const [facts, setFacts] = useState<Fact[]>([]);
   const [events, setEvents] = useState<CaseEvent[]>([]);
   const [workflow, setWorkflow] = useState<WorkflowState>("collecting evidence");
@@ -85,19 +116,38 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
   const [recState, setRecState] = useState<"idle" | "recording" | "transcribing">("idle");
   const [recSecs, setRecSecs] = useState(0);
   const [voiceOn, setVoiceOn] = useState(true);
-  const [voice, setVoice] = useState("Kore");
   const [speaking, setSpeaking] = useState(false);
-  const [voicePrep, setVoicePrep] = useState(false);
   const [aiDown, setAiDown] = useState(false);
   const [ready, setReady] = useState(false);
   const [showPackets, setShowPackets] = useState(false);
   const [filed, setFiled] = useState(false);
   const [caseOpen, setCaseOpen] = useState(false);
+  const [flash, setFlash] = useState<string | null>(null);
 
   const recRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const autoStopRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const flashRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
+
+  // Strings for every surface: the session language, English until one is set.
+  const t = STR[lang ?? "en"];
+
+  // Session language + voice preference live on this device only. Read after
+  // mount, the component prerenders on the server where window is absent.
+  useEffect(() => {
+    const storedLang = lsGet("cs-lang");
+    if (lsGet("cs-voice") === "0") setVoiceOn(false);
+    if (isLang(storedLang)) {
+      setLang(storedLang);
+      setPhase("done");
+      setMsgs([{ id: nid(), role: "system", text: STR[storedLang].welcome, uiOnly: true }]);
+    } else {
+      setPhase("lang");
+      setMsgs([{ id: nid(), role: "system", text: LANG_PICK, uiOnly: true }]);
+    }
+  }, []);
 
   // Any playback interruption (another message, another button) clears the
   // speaking indicator.
@@ -105,37 +155,76 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-  }, [msgs, showPackets]);
+  }, [msgs, showPackets, phase, recState]);
 
   useEffect(
     () => () => {
       stopSaying();
-      recRef.current?.stream.getTracks().forEach((t) => t.stop());
+      recRef.current?.stream.getTracks().forEach((tr) => tr.stop());
       if (timerRef.current) clearInterval(timerRef.current);
+      if (autoStopRef.current) clearTimeout(autoStopRef.current);
+      if (flashRef.current) clearTimeout(flashRef.current);
     },
     []
   );
 
-  const say = (m: Omit<Msg, "id">) => setMsgs((p) => [...p, { ...m, id: nid() }]);
+  const say = (m: Omit<LMsg, "id">) => setMsgs((p) => [...p, { ...m, id: nid() }]);
 
-  const playReply = async (text: string) => {
+  /* -------- onboarding beats -------- */
+
+  const pickLang = (l: Lang) => {
+    setLang(l);
+    lsSet("cs-lang", l);
+    setPhase("voice");
+    say({ role: "system", text: STR[l].voiceQuestion, uiOnly: true });
+    // The chip tap is the user gesture; the demo clip is pre-generated.
+    try {
+      new Audio(`/onboard/voice-demo-${l}.mp3`).play().catch(() => {});
+    } catch {
+      /* no audio, the question still reads fine as text */
+    }
+  };
+
+  const answerVoice = (yes: boolean) => {
+    if (!yes) stopSaying();
+    setVoiceOn(yes);
+    lsSet("cs-voice", yes ? "1" : "0");
+    setPhase("done");
+    say({ role: "system", text: STR[lang ?? "en"].welcome, uiOnly: true });
+  };
+
+  const resetLang = () => {
+    lsDel("cs-lang");
+    setLang(null);
+    setPhase("lang");
+    say({ role: "system", text: LANG_PICK, uiOnly: true });
+  };
+
+  /* -------- conversation -------- */
+
+  const playReply = (text: string, l: Lang) => {
     if (!voiceOn) return;
-    setVoicePrep(true);
-    await sayAloud(text, {
-      voice,
-      onStart: () => {
-        setVoicePrep(false);
-        setSpeaking(true);
-      },
+    void sayAloud(text, {
+      voice: VOICE,
+      fallbackLang: VOICE_OF[l],
+      onStart: () => setSpeaking(true),
       onEnd: () => setSpeaking(false),
     });
-    setVoicePrep(false);
   };
 
   const mergeFacts = (
     incoming: { field: string; label: string; value: string; confidence: number }[]
   ) => {
     if (!incoming.length) return;
+    // Flash the newest genuinely-new fact in the mobile case bar for ~2s.
+    const fresh = [...incoming]
+      .reverse()
+      .find((f) => f.field && f.value && facts.find((x) => x.field === f.field)?.value !== String(f.value));
+    if (fresh) {
+      setFlash(`${fresh.label || fresh.field}: ${fresh.value}`);
+      if (flashRef.current) clearTimeout(flashRef.current);
+      flashRef.current = setTimeout(() => setFlash(null), 2000);
+    }
     setFacts((prev) => {
       const next = [...prev];
       for (const f of incoming) {
@@ -163,6 +252,21 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
     if (!text || busy) return;
     setInput("");
     stopSaying();
+
+    // Skip-by-doing: writing (or speaking) during onboarding sets the session
+    // language from the words themselves; voice stays on by default, unasked.
+    let sessLang = lang;
+    if (sessLang === null) {
+      sessLang = inferLang(text);
+      setLang(sessLang);
+      lsSet("cs-lang", sessLang);
+      setVoiceOn(true);
+      setPhase("done");
+    } else if (phase !== "done") {
+      setPhase("done");
+    }
+    const T = STR[sessLang];
+
     say({ role: "user", text });
 
     // Deterministic guard before anything else.
@@ -183,14 +287,14 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
 
     setBusy(true);
     try {
+      // Real conversation turns only: every ui-only bubble stays out.
       const history = [...msgs, { id: "x", role: "user" as const, text }]
-        .filter((m) => m.role === "user" || m.role === "system")
-        .slice(1) // drop the welcome
+        .filter((m) => !m.uiOnly)
         .map((m) => ({ role: m.role === "user" ? "user" : "assistant", content: m.text }));
       const r = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: history }),
+        body: JSON.stringify({ messages: history, lang: sessLang }),
       });
       const d = await r.json();
       if (d.emergency === "digital_arrest_interruption" || d.emergency_suspected) {
@@ -204,19 +308,16 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
       }
       if (!d.model) {
         setAiDown(true);
-        say({
-          role: "system",
-          text: "Live AI isn't reachable right now, so I can't hold a conversation — but nothing is lost. The sample case shows the complete journey, and the deterministic route still applies: bank fraud channel, 1930, then the complaint.",
-        });
+        say({ role: "system", text: T.aiDown, uiOnly: true });
         return;
       }
       say({ role: "system", text: d.reply });
       mergeFacts(d.facts ?? []);
       if (d.ready_to_review) setReady(true);
-      playReply(d.reply);
+      playReply(d.reply, sessLang);
     } catch {
       setAiDown(true);
-      say({ role: "system", text: "Something interrupted the connection. Your case file is untouched — try again, or open the sample case." });
+      say({ role: "system", text: T.aiDown, uiOnly: true });
     } finally {
       setBusy(false);
     }
@@ -233,7 +334,7 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
       chunksRef.current = [];
       rec.ondataavailable = (e) => e.data.size && chunksRef.current.push(e.data);
       rec.onstop = async () => {
-        stream.getTracks().forEach((t) => t.stop());
+        stream.getTracks().forEach((tr) => tr.stop());
         setRecState("transcribing");
         try {
           const blob = new Blob(chunksRef.current, { type: mime });
@@ -252,10 +353,10 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
           if (d.text) {
             send(d.text);
           } else {
-            say({ role: "system", text: "I couldn't catch that — try once more, a little closer to the phone, or type it." });
+            say({ role: "system", text: STR[lang ?? "en"].sttRetry, uiOnly: true });
           }
         } catch {
-          say({ role: "system", text: "Couldn't reach the transcription service. Typing still works." });
+          say({ role: "system", text: STR[lang ?? "en"].sttRetry, uiOnly: true });
         } finally {
           setRecState("idle");
         }
@@ -265,13 +366,15 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
       setRecState("recording");
       setRecSecs(0);
       timerRef.current = setInterval(() => setRecSecs((s) => s + 1), 1000);
+      autoStopRef.current = setTimeout(() => stopRec(), 60000);
     } catch {
-      say({ role: "system", text: "Microphone permission was blocked — typing works just the same." });
+      say({ role: "system", text: STR[lang ?? "en"].micDenied, uiOnly: true });
     }
   };
 
   const stopRec = () => {
     if (timerRef.current) clearInterval(timerRef.current);
+    if (autoStopRef.current) clearTimeout(autoStopRef.current);
     recRef.current?.stop();
   };
 
@@ -284,10 +387,10 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
       recipient: "your bank",
       title: "Bank fraud report",
       lines: [
-        { label: "Amount", value: fv("transaction.amount_inr") ?? "—" },
-        { label: "UTR", value: fv("transaction.utr") ?? "—" },
-        { label: "Date", value: fv("transaction.date") ?? fv("incident.datetime") ?? "—" },
-        { label: "Bank/wallet", value: fv("transaction.bank_or_wallet") ?? "—" },
+        { label: "Amount", value: fv("transaction.amount_inr") ?? "-" },
+        { label: "UTR", value: fv("transaction.utr") ?? "-" },
+        { label: "Date", value: fv("transaction.date") ?? fv("incident.datetime") ?? "-" },
+        { label: "Bank/wallet", value: fv("transaction.bank_or_wallet") ?? "-" },
       ],
       note: "Ask for an immediate hold attempt and a fraud reference number.",
     },
@@ -305,13 +408,16 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
       lines: [
         { label: "Category", value: "Financial fraud" },
         { label: "Facts", value: `${facts.filter((f) => f.status === "confirmed").length} confirmed` },
-        { label: "Suspect", value: fv("suspect.mobile_display") ?? fv("suspect.upi_id") ?? fv("suspect.bank_account") ?? "—" },
+        { label: "Suspect", value: fv("suspect.mobile_display") ?? fv("suspect.upi_id") ?? fv("suspect.bank_account") ?? "-" },
       ],
       note: "Mapped to the current cybercrime.gov.in checklist. Filing here is simulated and labeled.",
     },
   ];
 
   const confirmedCount = facts.filter((f) => f.status === "confirmed").length;
+  const candidateCount = facts.filter((f) => f.status === "candidate").length;
+  const hasUserTurn = msgs.some((m) => m.role === "user");
+  const lastSystemId = [...msgs].reverse().find((m) => m.role === "system")?.id;
 
   const simulateFiling = () => {
     setFiled(true);
@@ -326,10 +432,7 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
         simulated: true,
       },
     ]);
-    say({
-      role: "system",
-      text: "Simulated filing recorded — reference DEMO-NCRP-2026-1001. Remember: an acknowledgement is not an FIR, and your case stays live here. Track it any time from the Track section.",
-    });
+    say({ role: "system", text: t.filedMsg });
   };
 
   /* -------- render -------- */
@@ -338,6 +441,17 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
     <div className="mx-auto flex w-full max-w-6xl flex-1 gap-6 px-4 pb-6 pt-4 lg:px-8">
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="flex-1 space-y-3">
+          {lang && (
+            <div className="flex justify-end">
+              <button
+                onClick={resetLang}
+                className="rounded-full border border-line-strong bg-card px-2.5 py-1 text-[11px] font-semibold text-ink-soft hover:border-navy hover:text-navy"
+              >
+                {t.changeLang}
+              </button>
+            </div>
+          )}
+
           {msgs.map((m) => (
             <div key={m.id} className={`msg-in flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
               <div
@@ -348,32 +462,85 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
                 }`}
               >
                 {m.text}
+                {speaking && m.id === lastSystemId && (
+                  <span className="ml-1.5 inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-navy align-middle" aria-hidden />
+                )}
                 {m.badge && (
                   <span className="mt-2 block font-mono text-[10px] uppercase tracking-wider opacity-60">{m.badge}</span>
                 )}
                 {m.role === "system" && (
                   <span className="mt-1.5 block">
-                    <SpeakButton text={m.text} voice={voice} />
+                    <SpeakButton text={m.text} voice={VOICE} lang={VOICE_OF[lang ?? "en"]} />
                   </span>
                 )}
               </div>
             </div>
           ))}
 
-          {busy && <Thinking />}
+          {/* beat 1: pick a language, or just start talking, either works */}
+          {phase === "lang" && (
+            <div className="msg-in space-y-2.5 pt-1">
+              <div className="flex flex-wrap gap-2">
+                {(["hi", "mr", "en"] as Lang[]).map((l) => (
+                  <button
+                    key={l}
+                    onClick={() => pickLang(l)}
+                    className="rounded-full border border-line-strong bg-paper-raised px-6 py-3 text-[16px] font-semibold text-ink hover:border-navy hover:text-navy"
+                  >
+                    {LANG_LABEL[l]}
+                  </button>
+                ))}
+              </div>
+              <p className="text-[11px] text-ink-faint">{STR.en.langNote}</p>
+            </div>
+          )}
+
+          {/* beat 2: hear the voice once, then choose */}
+          {phase === "voice" && lang && (
+            <div className="msg-in flex flex-wrap gap-2 pt-1">
+              <button
+                onClick={() => answerVoice(true)}
+                className="rounded-full bg-navy px-5 py-2.5 text-[13.5px] font-bold text-white hover:bg-navy-deep"
+              >
+                {STR[lang].voiceYes}
+              </button>
+              <button
+                onClick={() => answerVoice(false)}
+                className="rounded-full border border-line-strong bg-paper-raised px-5 py-2.5 text-[13.5px] font-semibold text-ink-soft hover:border-navy hover:text-navy"
+              >
+                {STR[lang].voiceNo}
+              </button>
+            </div>
+          )}
+
+          {recState === "transcribing" && (
+            <div className="msg-in flex justify-end">
+              <div className="max-w-[85%] animate-pulse rounded-xl rounded-br-sm bg-navy/60 px-4 py-3 text-[14px] text-white/90">
+                {t.sttUnderstanding}
+              </div>
+            </div>
+          )}
+
+          {busy && <Thinking lang={lang ?? "en"} />}
 
           {ready && confirmedCount >= 3 && !showPackets && (
             <button
               onClick={() => setShowPackets(true)}
               className="msg-in rounded-full bg-navy px-5 py-2.5 text-[13.5px] font-bold text-white hover:bg-navy-deep"
             >
-              Prepare my packets — bank · 1930 · NCRP
+              {t.preparePackets}
             </button>
           )}
           {ready && confirmedCount < 3 && facts.length > 0 && (
-            <p className="msg-in text-[12px] text-ink-faint">
-              Confirm the facts in your case file to unlock the packets — nothing unconfirmed is ever used.
-            </p>
+            <div className="msg-in space-y-1.5">
+              <button
+                onClick={() => setCaseOpen(true)}
+                className="block rounded-xl rounded-bl-sm border border-navy bg-navy-wash px-4 py-3 text-left text-[13.5px] font-semibold text-navy transition-colors hover:bg-navy hover:text-white"
+              >
+                {fmt(t.factsAwait, { n: candidateCount })}
+              </button>
+              <p className="text-[12px] text-ink-faint">{t.confirmHint}</p>
+            </div>
           )}
 
           {showPackets && (
@@ -384,15 +551,15 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
                   onClick={simulateFiling}
                   className="rounded-full bg-navy px-5 py-2.5 text-[13.5px] font-bold text-white hover:bg-navy-deep"
                 >
-                  Simulate NCRP filing — nothing is really sent
+                  {t.simulateFiling}
                 </button>
               )}
             </div>
           )}
 
-          {msgs.length === 1 && (
+          {phase === "done" && !hasUserTurn && (
             <div className="flex flex-wrap gap-2 pt-1">
-              {STARTERS.map((s) => (
+              {t.starters.map((s) => (
                 <button
                   key={s}
                   onClick={() => send(s)}
@@ -415,60 +582,40 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
           <div ref={endRef} />
         </div>
 
-        {/* composer */}
+        {/* composer, fully active from the first frame, onboarding included */}
         <div className="sticky bottom-0 mt-4 bg-gradient-to-t from-paper via-paper to-transparent pb-1 pt-3">
           {facts.length > 0 && (
             <button
               onClick={() => setCaseOpen(true)}
               className="mb-2 flex w-full items-center justify-between rounded-lg border border-line-strong bg-card px-3 py-2 shadow-sm lg:hidden"
             >
-              <span className="text-[12.5px] font-semibold text-navy">
-                Case file · {facts.length} facts · {confirmedCount} confirmed by you
+              <span className={`text-[12.5px] font-semibold ${flash ? "text-green" : "text-navy"}`}>
+                {flash ?? fmt(t.caseBar, { n: facts.length, c: confirmedCount })}
               </span>
-              <span className="text-[12px] text-ink-faint">open ▸</span>
+              <span className="text-[12px] text-ink-faint">{t.openSheet}</span>
             </button>
           )}
           <div className="mb-1.5 flex items-center justify-between px-1">
             <p className="text-[11px] text-ink-faint">
               {recState === "recording" && (
-                <span className="font-semibold text-red">● Recording {recSecs}s — tap the mic to finish</span>
+                <span className="font-semibold text-red">{fmt(t.sttRecording, { s: recSecs })}</span>
               )}
-              {recState === "transcribing" && <span className="font-semibold text-navy">Understanding your words…</span>}
-              {recState === "idle" && voicePrep && (
-                <span className="text-navy">Preparing the voice reply…</span>
-              )}
-              {recState === "idle" && !voicePrep && speaking && (
-                <span className="text-navy">Speaking…</span>
-              )}
-              {recState === "idle" && !voicePrep && !speaking && "Speak or type — any language"}
+              {recState === "transcribing" && <span className="font-semibold text-navy">{t.sttUnderstanding}</span>}
+              {recState === "idle" && speaking && <span className="text-navy">{t.speaking}</span>}
+              {recState === "idle" && !speaking && t.statusSpeakType}
             </p>
-            <div className="flex items-center gap-1.5">
-              <button
-                onClick={() => {
-                  if (voiceOn) stopSaying();
-                  setVoiceOn(!voiceOn);
-                }}
-                className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold ${
-                  voiceOn ? "border-navy bg-navy-wash text-navy" : "border-line-strong text-ink-faint"
-                }`}
-              >
-                {voiceOn ? "🔊 replies aloud" : "🔇 replies muted"}
-              </button>
-              {voiceOn && (
-                <select
-                  value={voice}
-                  onChange={(e) => setVoice(e.target.value)}
-                  aria-label="Reply voice"
-                  className="rounded-full border border-line-strong bg-card px-2 py-1 text-[11px] text-ink-soft outline-none focus:border-navy"
-                >
-                  {VOICES.map((v) => (
-                    <option key={v.id} value={v.id}>
-                      {v.label}
-                    </option>
-                  ))}
-                </select>
-              )}
-            </div>
+            <button
+              onClick={() => {
+                if (voiceOn) stopSaying();
+                setVoiceOn(!voiceOn);
+                lsSet("cs-voice", voiceOn ? "0" : "1");
+              }}
+              className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold ${
+                voiceOn ? "border-navy bg-navy-wash text-navy" : "border-line-strong text-ink-faint"
+              }`}
+            >
+              {voiceOn ? t.repliesAloud : t.repliesMuted}
+            </button>
           </div>
           <form
             onSubmit={(e) => {
@@ -502,7 +649,7 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="बोलिए, या यहाँ लिखिए…"
+              placeholder={t.placeholder}
               className="min-w-0 flex-1 rounded-lg border border-line-strong bg-paper-raised px-4 py-3 text-[14px] outline-none placeholder:text-ink-faint focus:border-navy"
             />
             <button
@@ -510,7 +657,7 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
               disabled={busy || !input.trim()}
               className="rounded-lg bg-navy px-5 py-3 text-[14px] font-medium text-white transition-colors hover:bg-navy-deep disabled:opacity-40"
             >
-              Send
+              {t.send}
             </button>
           </form>
         </div>
@@ -525,6 +672,8 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
             evidence={[]}
             actions={[]}
             events={events}
+            lang={lang ?? "en"}
+            variant="draft"
             onConfirmFact={(id) => setFacts((p) => p.map((f) => (f.id === id ? { ...f, status: "confirmed" } : f)))}
           />
         </div>
@@ -546,6 +695,8 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
                 evidence={[]}
                 actions={[]}
                 events={events}
+                lang={lang ?? "en"}
+                variant="draft"
                 onConfirmFact={(id) => setFacts((p) => p.map((f) => (f.id === id ? { ...f, status: "confirmed" } : f)))}
               />
             </div>
@@ -555,13 +706,11 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
 
       {emergency && (
         <Emergency
+          sessionLang={VOICE_OF[lang ?? "en"]}
           onResolved={() => {
             setEmergency(false);
             setWorkflow("collecting evidence");
-            say({
-              role: "system",
-              text: "You did the two things that matter most: the call is over and no more money moved. When you're ready, tell me about the transfer you already made — amount first — and we'll make it recoverable.",
-            });
+            say({ role: "system", text: t.emergencyResume });
           }}
         />
       )}

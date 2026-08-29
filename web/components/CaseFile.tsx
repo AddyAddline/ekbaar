@@ -7,6 +7,7 @@ import type {
   Fact,
   WorkflowState,
 } from "@/lib/types";
+import { type Lang, STR, fmt } from "@/lib/i18n";
 
 function ConfidenceDots({ value }: { value: number }) {
   const filled = value >= 0.95 ? 3 : value >= 0.8 ? 2 : 1;
@@ -25,10 +26,16 @@ function ConfidenceDots({ value }: { value: number }) {
 export function FactRow({
   fact,
   onConfirm,
+  lang = "en",
+  variant = "demo",
 }: {
   fact: Fact;
   onConfirm?: (id: string) => void;
+  lang?: Lang;
+  variant?: "demo" | "draft";
 }) {
+  // The guided sample stays English by design; only the live draft localizes.
+  const t = variant === "draft" ? STR[lang] : STR.en;
   return (
     <div className="fact-arrive rounded-md px-2 py-1.5 -mx-2">
       <div className="flex items-baseline justify-between gap-2">
@@ -43,14 +50,14 @@ export function FactRow({
               onClick={() => onConfirm(fact.id)}
               className="shrink-0 rounded border border-navy px-2 py-0.5 text-[11px] font-medium text-navy hover:bg-navy hover:text-white transition-colors"
             >
-              Confirm
+              {t.confirm}
             </button>
           ) : (
-            <span className="text-[10px] uppercase tracking-wider text-hold">unconfirmed</span>
+            <span className="text-[10px] uppercase tracking-wider text-hold">{t.unconfirmed}</span>
           )
         ) : (
           <span className="text-[11px] text-ok" title="Confirmed by you">
-            ✓ you
+            {t.confirmedYou}
           </span>
         )}
       </div>
@@ -69,6 +76,8 @@ export default function CaseFile({
   actions,
   events,
   onConfirmFact,
+  lang = "en",
+  variant = "demo",
 }: {
   workflowState: WorkflowState;
   facts: Fact[];
@@ -76,15 +85,22 @@ export default function CaseFile({
   actions: ActionItem[];
   events: CaseEvent[];
   onConfirmFact?: (id: string) => void;
+  lang?: Lang;
+  variant?: "demo" | "draft";
 }) {
+  // Localize only the live draft; the guided sample stays English by design.
+  const t = variant === "draft" ? STR[lang] : STR.en;
   return (
     <div className="dossier rounded-lg border border-line-strong shadow-[0_2px_12px_rgba(33,29,24,0.07)]">
       <div className="flex items-start justify-between border-b border-line-strong px-4 py-3">
         <div>
-          <p className="font-mono text-[11px] tracking-wider text-ink-faint">CASE DEMO-0002</p>
+          <p className="font-mono text-[11px] tracking-wider text-ink-faint">
+            {variant === "draft" ? "DRAFT" : "CASE DEMO-0002"}
+          </p>
           <p className="font-display text-[15px] font-semibold text-ink">Your case file</p>
         </div>
-        <span className="stamp">Synthetic demo</span>
+        {/* The live case is real user input, not synthetic demo data. */}
+        <span className="stamp">{variant === "draft" ? t.draftStamp : "Synthetic demo"}</span>
       </div>
 
       <div className="border-b border-line px-4 py-2.5">
@@ -94,7 +110,10 @@ export default function CaseFile({
 
       <div className="border-b border-line px-4 py-3">
         <p className="mb-1.5 text-[11px] uppercase tracking-wider text-ink-faint">
-          Facts · {facts.filter((f) => f.status === "confirmed").length} confirmed of {facts.length}
+          {fmt(t.factsHeader, {
+            c: facts.filter((f) => f.status === "confirmed").length,
+            n: facts.length,
+          })}
         </p>
         {facts.length === 0 ? (
           <p className="text-[12px] italic text-ink-faint">
@@ -103,7 +122,7 @@ export default function CaseFile({
         ) : (
           <div className="space-y-1.5">
             {facts.map((f) => (
-              <FactRow key={f.id} fact={f} onConfirm={onConfirmFact} />
+              <FactRow key={f.id} fact={f} onConfirm={onConfirmFact} lang={lang} variant={variant} />
             ))}
           </div>
         )}

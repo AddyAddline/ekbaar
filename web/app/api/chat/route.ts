@@ -31,14 +31,23 @@ HARD RULES:
 
 interface ChatMsg { role: "user" | "assistant"; content: string }
 
+// The citizen's chosen session language, when the client sends one.
+const LANG_NAME: Record<string, string> = {
+  en: "English",
+  hi: "Hindi (Devanagari script)",
+  mr: "Marathi (Devanagari script)",
+};
+
 export async function POST(req: NextRequest) {
   const key = process.env.OPENAI_API_KEY;
   const base = (process.env.OPENAI_BASE_URL || "https://api.openai.com/v1").replace(/\/$/, "");
   const model = process.env.OPENAI_MODEL || "openai/gpt-5.6-terra";
 
   let messages: ChatMsg[] = [];
+  let lang: string | undefined;
   try {
     const b = await req.json();
+    if (typeof b.lang === "string" && LANG_NAME[b.lang]) lang = b.lang;
     messages = (Array.isArray(b.messages) ? b.messages : [])
       .slice(-16)
       .map((m: ChatMsg) => ({
@@ -59,13 +68,17 @@ export async function POST(req: NextRequest) {
 
   if (!key) return NextResponse.json({ model: false });
 
+  const system = lang
+    ? `${SYSTEM}\n\nSESSION LANGUAGE: Reply ONLY in ${LANG_NAME[lang]}. If the citizen consistently writes in a different language, follow the citizen. Emit fact "label" fields in the session language; keep "field" keys and extracted values verbatim.`
+    : SYSTEM;
+
   try {
     const r = await fetch(`${base}/chat/completions`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
       body: JSON.stringify({
         model,
-        messages: [{ role: "system", content: SYSTEM }, ...messages],
+        messages: [{ role: "system", content: system }, ...messages],
         max_tokens: 6000,
         response_format: {
           type: "json_schema",

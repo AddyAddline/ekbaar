@@ -46,9 +46,16 @@ const LANGS: { code: VoiceLang; native: string }[] = [
   { code: "mr-IN", native: "मराठी" },
 ];
 
-export default function Emergency({ onResolved }: { onResolved: () => void }) {
+export default function Emergency({
+  onResolved,
+  sessionLang = "en-IN",
+}: {
+  onResolved: () => void;
+  sessionLang?: VoiceLang;
+}) {
   const [ended, setEnded] = useState(false);
-  const [lang, setLang] = useState<VoiceLang>("en-IN");
+  // Opens in the session's language; the in-screen switcher stays as an escape hatch.
+  const [lang, setLang] = useState<VoiceLang>(sessionLang);
   const c = COPY[lang];
 
   // The screen appears after a user tap, so audio is permitted. Speak the
