@@ -55,6 +55,30 @@ interface Strings {
   aiDown: string;
   draftStamp: string;
   changeLang: string;
+  // Learn corner
+  learnTitle: string;
+  learnSub: string;
+  simCommit: string;
+  simNotNow: string;
+  simDebriefCheck: string;
+  checkerTitle: string;
+  checkerPlaceholder: string;
+  checkerBoundary: string;
+  checkerDisambig: string;
+  checkerWhy: string;
+  theTell: string;
+  firstMove: string;
+  howStarts: string;
+  checkerAgain: string;
+  checkerFallback: string;
+  checkerMoney: string;
+  checkerUnknown: string;
+  checkerChecking: string;
+  engineTitle: string;
+  engineBody: string;
+  practiceThis: string;
+  checkLike: string;
+  patternsTitle: string;
   starters: string[]; // starters[0] MUST deterministically trip the digital-arrest rule
 }
 
@@ -107,6 +131,29 @@ export const STR: Record<Lang, Strings> = {
       "Live AI isn't reachable right now, so I can't hold a conversation, but nothing is lost. The sample case shows the complete journey, and the emergency guard still works: it doesn't need AI.",
     draftStamp: "Draft · this device only",
     changeLang: "change",
+    learnTitle: "The scam works because it's a surprise. Take the surprise away.",
+    learnSub: "The government portal's learning corner is PDFs. Ours is practice, in your language.",
+    simCommit: "90 seconds · 3 decisions · every tell sourced to MHA",
+    simNotNow: "Show me the patterns instead",
+    simDebriefCheck: "Got a real message you're unsure about? Check it",
+    checkerTitle: "Is this a scam?",
+    checkerPlaceholder: "Paste the SMS, or say what happened…",
+    checkerBoundary: "Answers come only from sourced MHA / PIB / RBI facts. If we don't know, we say so.",
+    checkerDisambig: "A number or UPI ID? Use Check suspect. A message or a story? Check it here.",
+    checkerWhy: "Why this matches",
+    theTell: "The tell",
+    firstMove: "First move",
+    howStarts: "How it starts",
+    checkerAgain: "Check another message",
+    checkerFallback: "AI unavailable. This is a rule-based match only.",
+    checkerMoney: "Money already moved? Call 1930 and report now →",
+    checkerUnknown: "This doesn't clearly match a documented pattern. If it feels wrong, it probably is. When in doubt: don't pay, don't click, call 1930.",
+    checkerChecking: "Checking against sourced patterns…",
+    engineTitle: "One set of MHA-sourced rules. Three jobs.",
+    engineBody: "It interrupts the scam in Report, plays the scammer in this simulator, and answers your doubt in the checker. The model never decides; the rules do.",
+    practiceThis: "Practice this call",
+    checkLike: "Check a message like this",
+    patternsTitle: "Six scripts scammers reuse. Read them once, own them for life.",
     starters: [
       "Someone saying they are police has me on a video call and wants money",
       "I paid a seller on Instagram and got blocked",
@@ -161,6 +208,29 @@ export const STR: Record<Lang, Strings> = {
       "लाइव AI अभी उपलब्ध नहीं है, इसलिए बातचीत नहीं हो पा रही, लेकिन कुछ खोया नहीं है। Sample case में पूरा सफ़र दिखता है, और आपातकालीन सुरक्षा अब भी काम करती है: उसे AI की ज़रूरत नहीं।",
     draftStamp: "ड्राफ्ट · सिर्फ़ इस डिवाइस पर",
     changeLang: "बदलें",
+    learnTitle: "ठगी इसलिए चलती है क्योंकि वह अचानक आती है। उस अचानक को ख़त्म कीजिए।",
+    learnSub: "सरकारी पोर्टल का लर्निंग कॉर्नर PDF है। हमारा है अभ्यास, आपकी भाषा में।",
+    simCommit: "90 सेकंड · 3 फ़ैसले · हर पहचान का स्रोत गृह मंत्रालय",
+    simNotNow: "पहले पैटर्न दिखाइए",
+    simDebriefCheck: "कोई असली मैसेज है जिस पर शक है? यहाँ जांचिए",
+    checkerTitle: "क्या यह ठगी है?",
+    checkerPlaceholder: "SMS चिपकाइए, या बोलकर बताइए…",
+    checkerBoundary: "जवाब सिर्फ़ गृह मंत्रालय / PIB / RBI के स्रोतों से आते हैं। जो नहीं पता, वह हम साफ़ कह देते हैं।",
+    checkerDisambig: "नंबर या UPI ID है? Check suspect में देखिए। मैसेज या कहानी है? यहाँ जांचिए।",
+    checkerWhy: "यह क्यों मेल खाता है",
+    theTell: "पहचान",
+    firstMove: "पहला कदम",
+    howStarts: "कैसे शुरू होती है",
+    checkerAgain: "दूसरा मैसेज जांचिए",
+    checkerFallback: "AI उपलब्ध नहीं। यह सिर्फ़ नियम-आधारित मिलान है।",
+    checkerMoney: "पैसा जा चुका है? अभी 1930 पर कॉल करें और रिपोर्ट करें →",
+    checkerUnknown: "यह किसी दर्ज पैटर्न से साफ़ मेल नहीं खाता। अगर गलत लग रहा है, तो शायद गलत ही है। शक हो तो: पैसे मत भेजिए, लिंक मत खोलिए, 1930 पर कॉल कीजिए।",
+    checkerChecking: "स्रोत वाले पैटर्न से मिला रही हूँ…",
+    engineTitle: "गृह मंत्रालय के स्रोतों वाले नियम एक। काम तीन।",
+    engineBody: "यही नियम Report में ठगी रोकते हैं, इस सिम्युलेटर में ठग का किरदार निभाते हैं, और चेकर में आपके शक का जवाब देते हैं। फ़ैसला मॉडल नहीं, नियम करते हैं।",
+    practiceThis: "यह कॉल अभ्यास कीजिए",
+    checkLike: "ऐसा मैसेज जांचिए",
+    patternsTitle: "छह स्क्रिप्ट जो ठग बार-बार दोहराते हैं। एक बार पढ़िए, हमेशा के लिए पहचानिए।",
     starters: [
       "“सीबीआई अफ़सर” वीडियो कॉल पर हैं, कहते हैं गिरफ्तार करेंगे, पैसे मांग रहे हैं",
       "मैंने Instagram पर एक विक्रेता को पैसे भेजे और उसने ब्लॉक कर दिया",
@@ -215,6 +285,29 @@ export const STR: Record<Lang, Strings> = {
       "लाइव्ह AI सध्या उपलब्ध नाही, म्हणून संवाद होऊ शकत नाही, पण काहीही हरवलेलं नाही. Sample case मध्ये पूर्ण प्रवास दिसतो, आणि आपत्कालीन संरक्षण अजूनही चालू आहे: त्याला AI ची गरज नाही.",
     draftStamp: "ड्राफ्ट · फक्त या डिव्हाइसवर",
     changeLang: "बदला",
+    learnTitle: "फसवणूक चालते कारण ती अचानक येते. ते अचानकपण काढून टाका.",
+    learnSub: "सरकारी पोर्टलचा लर्निंग कॉर्नर म्हणजे PDF. आमचा आहे सराव, तुमच्या भाषेत.",
+    simCommit: "90 सेकंद · 3 निर्णय · प्रत्येक खुणेचा स्रोत गृह मंत्रालय",
+    simNotNow: "आधी पॅटर्न दाखवा",
+    simDebriefCheck: "खरा मेसेज आहे ज्याबद्दल शंका आहे? इथे तपासा",
+    checkerTitle: "ही फसवणूक आहे का?",
+    checkerPlaceholder: "SMS पेस्ट करा, किंवा बोलून सांगा…",
+    checkerBoundary: "उत्तरं फक्त गृह मंत्रालय / PIB / RBI च्या स्रोतांमधून येतात. जे माहीत नाही, ते आम्ही स्पष्ट सांगतो.",
+    checkerDisambig: "नंबर किंवा UPI ID आहे? Check suspect मध्ये पाहा. मेसेज किंवा गोष्ट आहे? इथे तपासा.",
+    checkerWhy: "हे का जुळते",
+    theTell: "खूण",
+    firstMove: "पहिले पाऊल",
+    howStarts: "कशी सुरू होते",
+    checkerAgain: "दुसरा मेसेज तपासा",
+    checkerFallback: "AI उपलब्ध नाही. हे फक्त नियम-आधारित जुळणे आहे.",
+    checkerMoney: "पैसे आधीच गेले आहेत? आत्ताच 1930 वर कॉल करा आणि तक्रार करा →",
+    checkerUnknown: "हे कोणत्याही नोंदवलेल्या पॅटर्नशी स्पष्ट जुळत नाही. चुकीचे वाटत असेल, तर बहुधा तसेच आहे. शंका असेल तर: पैसे पाठवू नका, लिंक उघडू नका, 1930 वर कॉल करा.",
+    checkerChecking: "स्रोत असलेल्या पॅटर्नशी तपासत आहे…",
+    engineTitle: "गृह मंत्रालयाच्या स्रोतांचे नियम एक. कामे तीन.",
+    engineBody: "हेच नियम Report मध्ये फसवणूक थांबवतात, या सिम्युलेटरमध्ये ठगाची भूमिका करतात, आणि चेकरमध्ये तुमच्या शंकेचे उत्तर देतात. निर्णय मॉडेल नाही, नियम घेतात.",
+    practiceThis: "हा कॉल सराव करा",
+    checkLike: "असा मेसेज तपासा",
+    patternsTitle: "सहा स्क्रिप्ट ज्या ठग पुन्हा पुन्हा वापरतात. एकदा वाचा, कायमचे ओळखा.",
     starters: [
       "“पोलीस” म्हणणारे व्हिडिओ कॉलवर आहेत, पैसे मागत आहेत, अटक करू म्हणतात",
       "मी Instagram वरील विक्रेत्याला पैसे पाठवले आणि त्याने ब्लॉक केलं",

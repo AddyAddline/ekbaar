@@ -4,10 +4,15 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { SIM_BEATS, SIM_DEBRIEF } from "@/lib/simulator";
 import { sayClip, stopSaying } from "@/lib/say";
+import { STR, type Lang } from "@/lib/i18n";
 
 type Phase = "ringing" | "beat" | "feedback" | "debrief";
 
-export default function Simulator() {
+const scrollTo = (id: string) =>
+  document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+export default function Simulator({ lang = "en" }: { lang?: Lang }) {
+  const t = STR[lang];
   const [phase, setPhase] = useState<Phase>("ringing");
   const [beat, setBeat] = useState(0);
   const [picked, setPicked] = useState<number | null>(null);
@@ -69,28 +74,37 @@ export default function Simulator() {
 
         {phase === "ringing" && (
           <div className="takeover flex flex-col items-center px-6 pb-8 pt-10 text-white">
-            <div className="ring flex h-20 w-20 items-center justify-center rounded-full bg-white/10 text-[34px]">
-              📞
+            <div className="relative">
+              <span
+                className="absolute inset-0 animate-ping rounded-full bg-white/15 [animation-duration:2.2s]"
+                aria-hidden
+              />
+              <div className="ring relative flex h-20 w-20 items-center justify-center rounded-full bg-white/10 text-[34px]">
+                📞
+              </div>
             </div>
             <p className="mt-5 text-[19px] font-bold">&ldquo;Mumbai Cyber Cell&rdquo;</p>
             <p className="mt-1 font-mono text-[12px] text-white/60">+91 98XX XXX 431 · WhatsApp video</p>
-            <p className="mt-6 max-w-[260px] text-center text-[12.5px] leading-relaxed text-white/70">
+            <p className={`mt-3 font-mono text-[10.5px] uppercase tracking-wider text-saffron/90 ${lang !== "en" ? "font-devanagari normal-case tracking-normal" : ""}`}>
+              {t.simCommit}
+            </p>
+            <p className="mt-5 max-w-[260px] text-center text-[12.5px] leading-relaxed text-white/70">
               You are about to take a scam call in a safe sandbox. Your job:
               spot the three tells.
             </p>
-            <div className="mt-7 flex gap-3">
+            <div className="mt-7 flex flex-wrap justify-center gap-3">
               <button
                 onClick={answer}
                 className="rounded-full bg-green px-7 py-3 text-[14px] font-bold text-white hover:brightness-110"
               >
                 Answer
               </button>
-              <Link
-                href="/learn"
-                className="rounded-full border border-white/25 px-6 py-3 text-[14px] font-semibold text-white/80 hover:bg-white/10"
+              <button
+                onClick={() => scrollTo("patterns")}
+                className={`rounded-full border border-white/25 px-6 py-3 text-[14px] font-semibold text-white/80 hover:bg-white/10 ${lang !== "en" ? "font-devanagari" : ""}`}
               >
-                Not now
-              </Link>
+                {t.simNotNow}
+              </button>
             </div>
           </div>
         )}
@@ -202,6 +216,12 @@ export default function Simulator() {
               >
                 This happened to me or someone I know, report it
               </Link>
+              <button
+                onClick={() => scrollTo("checker")}
+                className={`rounded-lg border border-white/25 px-4 py-3 text-center text-[14px] font-semibold text-white/85 hover:bg-white/10 ${lang !== "en" ? "font-devanagari" : ""}`}
+              >
+                {t.simDebriefCheck}
+              </button>
               <button
                 onClick={() => {
                   setBeat(0);
