@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PortalHeader, EmergencyStrip } from "@/components/PortalChrome";
+import { PortalHeader } from "@/components/PortalChrome";
 
 function Card({
   href,
@@ -35,7 +35,6 @@ export default function Home() {
   return (
     <>
       <PortalHeader />
-      <EmergencyStrip />
       <main className="flex-1">
         <div className="mx-auto max-w-6xl px-4 pb-4 pt-11 sm:px-7">
           <h1 className="max-w-2xl text-[clamp(30px,5.5vw,46px)] font-extrabold leading-[1.08] tracking-tight">

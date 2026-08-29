@@ -23,17 +23,22 @@ export function SpeakButton({
   light?: boolean;
   voice?: string;
 }) {
-  const [on, setOn] = useState(false);
-  useEffect(() => onSayInterrupt(() => setOn(false)), []);
+  const [state, setState] = useState<"idle" | "loading" | "playing">("idle");
+  useEffect(() => onSayInterrupt(() => setState("idle")), []);
   return (
     <button
-      aria-label={on ? "Stop reading aloud" : "Read aloud"}
+      aria-label={state !== "idle" ? "Stop reading aloud" : "Read aloud"}
       onClick={() => {
-        if (on) {
+        if (state !== "idle") {
           stopSaying();
         } else {
-          setOn(true);
-          sayAloud(text, { voice, fallbackLang: lang, onEnd: () => setOn(false) });
+          setState("loading");
+          sayAloud(text, {
+            voice,
+            fallbackLang: lang,
+            onStart: () => setState("playing"),
+            onEnd: () => setState("idle"),
+          });
         }
       }}
       className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold transition-colors ${
@@ -42,7 +47,14 @@ export function SpeakButton({
           : "text-ink-faint hover:bg-navy-wash hover:text-navy"
       }`}
     >
-      {on ? "◼ stop" : "🔊 listen"}
+      {state === "loading" && (
+        <>
+          <span className="inline-block h-2.5 w-2.5 animate-spin rounded-full border border-current border-t-transparent" />
+          preparing voice…
+        </>
+      )}
+      {state === "playing" && "◼ stop"}
+      {state === "idle" && "🔊 listen"}
     </button>
   );
 }

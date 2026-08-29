@@ -74,6 +74,42 @@ export default function ContactPage() {
           prepared email, not homework.
         </p>
 
+        <div className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            {
+              who: "1930",
+              when: "Money moved in an online fraud",
+              how: "Call immediately — fast reporting helps banks attempt a hold.",
+              hot: true,
+            },
+            {
+              who: "112",
+              when: "Any threat to physical safety",
+              how: "Before any portal, any form, anything.",
+              hot: true,
+            },
+            {
+              who: "cybercrime.gov.in",
+              when: "Filing the formal complaint",
+              how: "Our Report section prepares everything the form asks for.",
+            },
+            {
+              who: "Grievance officer",
+              when: "Complaint filed, no response",
+              how: "Your state's escalation path — the tool below writes the letter.",
+            },
+          ].map((c) => (
+            <div
+              key={c.who}
+              className={`rounded-xl border p-4 ${c.hot ? "border-navy/30 bg-navy-wash" : "border-line bg-card"}`}
+            >
+              <p className={`text-[17px] font-extrabold ${c.hot ? "text-navy" : "text-ink"}`}>{c.who}</p>
+              <p className="mt-1 text-[12.5px] font-semibold text-ink-soft">{c.when}</p>
+              <p className="mt-1 text-[12px] leading-snug text-ink-faint">{c.how}</p>
+            </div>
+          ))}
+        </div>
+
         <div className="mt-7 grid gap-4 md:grid-cols-[280px_1fr]">
           <div className="space-y-3">
             <div className="rounded-xl border border-line bg-card p-4">

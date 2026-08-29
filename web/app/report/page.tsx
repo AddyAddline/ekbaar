@@ -6,11 +6,10 @@ import { PortalHeader } from "@/components/PortalChrome";
 export default async function ReportPage({
   searchParams,
 }: {
-  searchParams: Promise<{ mode?: string; emergency?: string }>;
+  searchParams: Promise<{ mode?: string }>;
 }) {
-  const { mode, emergency } = await searchParams;
-  const emergencyStart = emergency === "1";
-  const m = emergencyStart ? "live" : mode === "sample" || mode === "guided" ? "sample" : "live";
+  const { mode } = await searchParams;
+  const m = mode === "sample" || mode === "guided" ? "sample" : "live";
   return (
     <div className="flex flex-1 flex-col">
       <PortalHeader active="/report" />
@@ -44,7 +43,7 @@ export default async function ReportPage({
         </div>
       </div>
       {m === "live" ? (
-        <LiveCase emergencyStart={emergencyStart} />
+        <LiveCase />
       ) : (
         <CaseFlow mode="guided" />
       )}

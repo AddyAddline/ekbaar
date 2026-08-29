@@ -28,7 +28,13 @@ export function stopSaying() {
 
 export async function sayAloud(
   text: string,
-  opts: { voice?: string; style?: string; fallbackLang?: VoiceLang; onEnd?: () => void } = {}
+  opts: {
+    voice?: string;
+    style?: string;
+    fallbackLang?: VoiceLang;
+    onStart?: () => void;
+    onEnd?: () => void;
+  } = {}
 ): Promise<void> {
   current?.pause();
   current = null;
@@ -49,12 +55,14 @@ export async function sayAloud(
         URL.revokeObjectURL(url);
         opts.onEnd?.();
       };
+      opts.onStart?.();
       await a.play();
       return;
     }
   } catch {
     /* fall through to browser voice */
   }
+  opts.onStart?.();
   const ok = browserSpeak(text, opts.fallbackLang ?? "en-IN", { onEnd: opts.onEnd });
   if (!ok) opts.onEnd?.();
 }

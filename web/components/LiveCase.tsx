@@ -34,6 +34,40 @@ const STARTERS = [
 let idc = 0;
 const nid = () => `lm${++idc}`;
 
+/* The waiting moment says what is actually happening, staged over time. */
+function Thinking() {
+  const [stage, setStage] = useState(0);
+  useEffect(() => {
+    const t1 = setTimeout(() => setStage(1), 2600);
+    const t2 = setTimeout(() => setStage(2), 5600);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, []);
+  const lines = [
+    "Reading your words…",
+    "Checking against known scam patterns…",
+    "Working out the one thing to ask next…",
+  ];
+  return (
+    <div className="msg-in flex justify-start">
+      <div className="flex items-center gap-2.5 rounded-xl rounded-bl-sm border border-line bg-paper-raised px-4 py-3">
+        <span className="flex gap-1">
+          {[0, 1, 2].map((i) => (
+            <span
+              key={i}
+              className="h-1.5 w-1.5 animate-bounce rounded-full bg-navy/50"
+              style={{ animationDelay: `${i * 0.15}s` }}
+            />
+          ))}
+        </span>
+        <span className="text-[12.5px] text-ink-faint">{lines[stage]}</span>
+      </div>
+    </div>
+  );
+}
+
 export default function LiveCase({ emergencyStart = false }: { emergencyStart?: boolean }) {
   const [msgs, setMsgs] = useState<Msg[]>([
     {
@@ -53,6 +87,7 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
   const [voiceOn, setVoiceOn] = useState(true);
   const [voice, setVoice] = useState("Kore");
   const [speaking, setSpeaking] = useState(false);
+  const [voicePrep, setVoicePrep] = useState(false);
   const [aiDown, setAiDown] = useState(false);
   const [ready, setReady] = useState(false);
   const [showPackets, setShowPackets] = useState(false);
@@ -85,8 +120,16 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
 
   const playReply = async (text: string) => {
     if (!voiceOn) return;
-    setSpeaking(true);
-    await sayAloud(text, { voice, onEnd: () => setSpeaking(false) });
+    setVoicePrep(true);
+    await sayAloud(text, {
+      voice,
+      onStart: () => {
+        setVoicePrep(false);
+        setSpeaking(true);
+      },
+      onEnd: () => setSpeaking(false),
+    });
+    setVoicePrep(false);
   };
 
   const mergeFacts = (
@@ -317,19 +360,7 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
             </div>
           ))}
 
-          {busy && (
-            <div className="msg-in flex justify-start">
-              <div className="flex items-center gap-1.5 rounded-xl rounded-bl-sm border border-line bg-paper-raised px-4 py-3">
-                {[0, 1, 2].map((i) => (
-                  <span
-                    key={i}
-                    className="h-1.5 w-1.5 animate-bounce rounded-full bg-navy/50"
-                    style={{ animationDelay: `${i * 0.15}s` }}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
+          {busy && <Thinking />}
 
           {ready && confirmedCount >= 3 && !showPackets && (
             <button
@@ -403,8 +434,13 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
                 <span className="font-semibold text-red">● Recording {recSecs}s — tap the mic to finish</span>
               )}
               {recState === "transcribing" && <span className="font-semibold text-navy">Understanding your words…</span>}
-              {recState === "idle" && speaking && <span className="text-navy">Speaking…</span>}
-              {recState === "idle" && !speaking && "Speak or type — any language"}
+              {recState === "idle" && voicePrep && (
+                <span className="text-navy">Preparing the voice reply…</span>
+              )}
+              {recState === "idle" && !voicePrep && speaking && (
+                <span className="text-navy">Speaking…</span>
+              )}
+              {recState === "idle" && !voicePrep && !speaking && "Speak or type — any language"}
             </p>
             <div className="flex items-center gap-1.5">
               <button
