@@ -215,7 +215,11 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
     // Flash the newest genuinely-new fact in the mobile case bar for ~2s.
     const fresh = [...incoming]
       .reverse()
-      .find((f) => f.field && f.value && facts.find((x) => x.field === f.field)?.value !== String(f.value));
+      .find((f) => {
+        if (!f.field || !f.value) return false;
+        const cur = facts.find((x) => x.field === f.field);
+        return cur?.status !== "confirmed" && cur?.value !== String(f.value);
+      });
     if (fresh) {
       setFlash(`${fresh.label || fresh.field}: ${fresh.value}`);
       if (flashRef.current) clearTimeout(flashRef.current);
@@ -226,7 +230,12 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
       for (const f of incoming) {
         if (!f.field || !f.value) continue;
         const i = next.findIndex((x) => x.field === f.field);
-        const fact: Fact = {
+        // A fact the citizen confirmed is theirs, not the model's. Later turns
+        // often re-word the same value ("Yesterday" -> "Yesterday around 8 pm"),
+        // and overwriting would silently discard their confirmation and keep the
+        // report locked forever. So confirmed facts are left exactly as they are.
+        if (i >= 0 && next[i].status === "confirmed") continue;
+        next[i >= 0 ? i : next.length] = {
           id: `lf-${f.field}`,
           field: f.field,
           label: f.label || f.field,
@@ -234,10 +243,8 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
           sourceKind: "model",
           sourceName: "your account (model-suggested)",
           confidence: Math.max(0.3, Math.min(0.99, f.confidence ?? 0.7)),
-          status: next[i]?.status === "confirmed" && next[i]?.value === String(f.value) ? "confirmed" : "candidate",
+          status: "candidate",
         };
-        if (i >= 0) next[i] = fact;
-        else next.push(fact);
       }
       return next;
     });
@@ -533,23 +540,31 @@ export default function LiveCase({ emergencyStart = false }: { emergencyStart?: 
 
           {busy && <Thinking lang={lang ?? "en"} />}
 
-          {ready && confirmedCount >= 3 && !showPackets && (
-            <button
-              onClick={() => setShowPackets(true)}
-              className="msg-in rounded-full bg-navy px-5 py-2.5 text-[13.5px] font-bold text-white hover:bg-navy-deep"
-            >
-              {t.preparePackets}
-            </button>
-          )}
-          {ready && confirmedCount < 3 && facts.length > 0 && (
-            <div className="msg-in space-y-1.5">
-              <button
-                onClick={() => setCaseOpen(true)}
-                className="block rounded-xl rounded-bl-sm border border-navy bg-navy-wash px-4 py-3 text-left text-[13.5px] font-semibold text-navy transition-colors hover:bg-navy hover:text-white"
-              >
-                {fmt(t.factsAwait, { n: candidateCount })}
-              </button>
-              <p className="text-[12px] text-ink-faint">{t.confirmHint}</p>
+          {/* Once the case has what a report needs, this is the loudest thing
+              on screen: no more questions to hunt for, one next action. */}
+          {ready && !showPackets && facts.length > 0 && (
+            <div className="msg-in rounded-xl border-2 border-navy bg-navy-wash p-4">
+              <p className="text-[10.5px] font-bold uppercase tracking-[0.09em] text-navy">
+                {t.reportReady}
+              </p>
+              {confirmedCount >= 3 ? (
+                <button
+                  onClick={() => setShowPackets(true)}
+                  className="mt-2.5 w-full rounded-lg bg-navy px-5 py-3 text-[14px] font-bold text-white hover:bg-navy-deep"
+                >
+                  {t.preparePackets}
+                </button>
+              ) : (
+                <>
+                  <button
+                    onClick={() => setCaseOpen(true)}
+                    className="mt-2.5 w-full rounded-lg bg-navy px-5 py-3 text-[14px] font-bold text-white hover:bg-navy-deep"
+                  >
+                    {fmt(t.factsAwait, { n: candidateCount })}
+                  </button>
+                  <p className="mt-2 text-[12px] leading-snug text-navy/75">{t.confirmHint}</p>
+                </>
+              )}
             </div>
           )}
 

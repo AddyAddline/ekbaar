@@ -48,7 +48,8 @@ interface Strings {
   factsHeader: string; // {c} {n}
   preparePackets: string;
   confirmHint: string;
-  factsAwait: string; // {n}
+  factsAwait: string;
+  reportReady: string; // {n}
   simulateFiling: string;
   filedMsg: string;
   emergencyResume: string;
@@ -122,6 +123,7 @@ export const STR: Record<Lang, Strings> = {
     preparePackets: "Prepare my packets, bank · 1930 · NCRP",
     confirmHint: "Confirm the facts in your case file to unlock the packets, nothing unconfirmed is ever used.",
     factsAwait: "{n} facts are waiting for your confirmation →",
+    reportReady: "Your report is ready to build.",
     simulateFiling: "Simulate NCRP filing, nothing is really sent",
     filedMsg:
       "Simulated filing recorded, reference DEMO-NCRP-2026-1001. Remember: an acknowledgement is not an FIR, and your case stays live here. Track it any time from the Track section.",
@@ -199,6 +201,7 @@ export const STR: Record<Lang, Strings> = {
     preparePackets: "मेरे पैकेट तैयार करें, बैंक · 1930 · NCRP",
     confirmHint: "पैकेट के लिए केस फ़ाइल में तथ्यों की पुष्टि करें, बिना आपकी पुष्टि कुछ भी इस्तेमाल नहीं होता।",
     factsAwait: "{n} तथ्य आपकी पुष्टि का इंतज़ार कर रहे हैं →",
+    reportReady: "आपकी रिपोर्ट बनने के लिए तैयार है।",
     simulateFiling: "NCRP फाइलिंग सिम्युलेट करें, असल में कुछ नहीं भेजा जाता",
     filedMsg:
       "सिम्युलेटेड फाइलिंग दर्ज, संदर्भ DEMO-NCRP-2026-1001। याद रखिए: पावती FIR नहीं होती, और आपका केस यहाँ चालू रहता है। Track सेक्शन से कभी भी देखिए।",
@@ -276,6 +279,7 @@ export const STR: Record<Lang, Strings> = {
     preparePackets: "माझी पॅकेट्स तयार करा, बँक · 1930 · NCRP",
     confirmHint: "पॅकेट्ससाठी केस फाईलमधील तथ्यं निश्चित करा, तुमच्या निश्चितीशिवाय काहीही वापरलं जात नाही.",
     factsAwait: "{n} तथ्यं तुमच्या निश्चितीची वाट पाहत आहेत →",
+    reportReady: "तुमचा अहवाल तयार होण्यासाठी सज्ज आहे.",
     simulateFiling: "NCRP फायलिंग सिम्युलेट करा, प्रत्यक्षात काहीही पाठवलं जात नाही",
     filedMsg:
       "सिम्युलेटेड फायलिंग नोंदवली, संदर्भ DEMO-NCRP-2026-1001. लक्षात ठेवा: पोच म्हणजे FIR नाही, आणि तुमची केस इथे चालू राहते. Track विभागातून कधीही पाहा.",
